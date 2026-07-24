@@ -1,8 +1,11 @@
 import express from "express";
 import { pinoHttp } from "pino-http";
 import logger from "./config/logger.js";
+import helmet from "helmet";
 
 const app = express();
+
+app.use(helmet());
 
 app.use(pinoHttp({ logger }));
 

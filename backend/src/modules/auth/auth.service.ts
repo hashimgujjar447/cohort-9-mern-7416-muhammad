@@ -5,7 +5,10 @@ import UserModel from "./auth.model.js";
 import { generateOtp } from "../../utils/generateOtp.js";
 import { generateAccessToken } from "../../utils/generateAccessToken.js";
 import { generateRefreshToken } from "../../utils/generateRefreshToken.js";
-import { serviceResponse } from "../../utils/apiResponse.js";
+import {
+  type ServiceResponse,
+  serviceResponse,
+} from "../../utils/apiResponse.js";
 import {
   sendVerificationEmail,
   sendPasswordResetEmail,
@@ -21,7 +24,7 @@ import type {
 } from "./auth.types.js";
 
 class AuthService {
-  async register(data: RegisterDto) {
+  async register(data: RegisterDto): Promise<ServiceResponse> {
     const { firstName, lastName, username, email, password } = data;
 
     const existingUser = await UserModel.findOne({ email });
@@ -86,7 +89,12 @@ class AuthService {
     );
   }
 
-  async login(data: LoginDto) {
+  async login(data: LoginDto): Promise<
+    ServiceResponse<{
+      accessToken: string;
+      refreshToken: string;
+    }>
+  > {
     const { email, password } = data;
 
     const user = await UserModel.findOne({ email });
@@ -131,7 +139,7 @@ class AuthService {
     });
   }
 
-  async verifyEmail(data: VerifyEmailDto) {
+  async verifyEmail(data: VerifyEmailDto): Promise<ServiceResponse> {
     const { email, otpCode } = data;
 
     const user = await UserModel.findOne({ email });
@@ -169,10 +177,10 @@ class AuthService {
     return serviceResponse(200, true, "Email verified successfully");
   }
 
-  async resetPasswordRequest(data: ResetPasswordRequestDto) {
-    const normalizedEmail = data.email.trim().toLowerCase();
-
-    const user = await UserModel.findOne({ email: normalizedEmail });
+  async resetPasswordRequest(
+    data: ResetPasswordRequestDto,
+  ): Promise<ServiceResponse> {
+    const user = await UserModel.findOne({ email: data.email });
 
     if (!user) {
       return serviceResponse(
@@ -209,7 +217,7 @@ class AuthService {
     );
   }
 
-  async changeUserPassword(data: ChangePasswordDto) {
+  async changeUserPassword(data: ChangePasswordDto): Promise<ServiceResponse> {
     const { token, password } = data;
 
     let decoded: ResetPasswordTokenPayload;
@@ -255,7 +263,11 @@ class AuthService {
     return serviceResponse(200, true, "Password changed successfully.");
   }
 
-  async refreshAccessToken(refreshToken: string) {
+  async refreshAccessToken(refreshToken: string): Promise<
+    ServiceResponse<{
+      accessToken: string;
+    }>
+  > {
     let decoded: IJwtPayload;
 
     try {
@@ -302,7 +314,7 @@ class AuthService {
     });
   }
 
-  async logout(userId: string) {
+  async logout(userId: string): Promise<ServiceResponse> {
     await UserModel.findByIdAndUpdate(userId, { refreshToken: null });
     return serviceResponse(200, true, "Logout successful");
   }

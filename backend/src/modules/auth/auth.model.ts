@@ -80,6 +80,7 @@ userSchema.pre("save", async function (this: HydratedDocument<IUser>) {
 });
 
 userSchema.methods.comparePassword = async function (
+  this: HydratedDocument<IUser>,
   password: string,
 ): Promise<boolean> {
   return bcrypt.compare(password, this.password);

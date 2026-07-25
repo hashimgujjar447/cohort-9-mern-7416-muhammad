@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import type { IJwtPayload } from "../modules/auth/auth.types.js";
 
 export const AuthMiddleware = (
   req: Request,
@@ -22,7 +23,7 @@ export const AuthMiddleware = (
       process.env.ACCESS_TOKEN_SECRET as string,
     );
 
-    req.user = decoded as JwtPayload;
+    req.user = decoded as IJwtPayload;
 
     next();
   } catch (error) {

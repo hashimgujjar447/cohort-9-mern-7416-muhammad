@@ -140,6 +140,12 @@ class AuthController {
 
       const result = await authService.refreshAccessToken(refreshToken);
 
+      if (!result.success) {
+        return res
+          .status(result.status)
+          .json({ success: result.success, message: result.message });
+      }
+
       return res.status(result.status).json({
         success: result.success,
         message: result.message,
@@ -154,23 +160,28 @@ class AuthController {
   }
 
   async logout(req: Request, res: Response) {
-    if (!req.user) {
+    try {
+      if (!req.user) {
+        return res
+          .status(403)
+          .json({ success: false, message: "Please login first to logout" });
+      }
+
+      await authService.logout(req.user.userId);
+
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+
+      return res.status(200).json({ success: true, message: "Logout successful" });
+    } catch (error) {
+      console.error(error);
       return res
-        .status(403)
-        .json({ success: false, message: "Please login first to logout" });
+        .status(500)
+        .json({ success: false, message: "Internal server error." });
     }
-
-    await authService.logout(req.user.userId);
-
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    });
-
-    return res
-      .status(200)
-      .json({ success: true, message: "Logout successful" });
   }
 }
 

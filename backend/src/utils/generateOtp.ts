@@ -1,7 +1,12 @@
+import { randomInt } from "crypto";
 import bcrypt from "bcryptjs";
 
-export const generateOtp = async () => {
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+export const generateOtp = async (): Promise<{
+  otp: string;
+  hashedOtp: string;
+  expiresAt: Date;
+}> => {
+  const otp = randomInt(100000, 1000000).toString();
 
   const hashedOtp = await bcrypt.hash(otp, 10);
 

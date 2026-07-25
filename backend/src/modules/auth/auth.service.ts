@@ -25,8 +25,37 @@ class AuthService {
     const { firstName, lastName, username, email, password } = data;
 
     const existingUser = await UserModel.findOne({ email });
-    const isUserNameAlreadyExist = await UserModel.findOne({ username });
-    if (isUserNameAlreadyExist) {
+
+    if (existingUser) {
+      if (existingUser.isVerified) {
+        return serviceResponse(
+          409,
+          false,
+          "User already exists. Please login.",
+        );
+      }
+
+      const { otp, hashedOtp, expiresAt } = await generateOtp();
+
+      existingUser.emailVerificationToken = hashedOtp;
+      existingUser.emailVerificationTokenExpiry = expiresAt;
+
+      await existingUser.save();
+
+      if (process.env.NODE_ENV !== "test") {
+        await sendVerificationEmail(email, otp);
+      }
+
+      return serviceResponse(
+        200,
+        true,
+        "A new verification OTP has been sent to your email.",
+      );
+    }
+
+    const usernameExists = await UserModel.findOne({ username });
+
+    if (usernameExists) {
       return serviceResponse(
         409,
         false,
@@ -34,23 +63,7 @@ class AuthService {
       );
     }
 
-    if (existingUser?.isVerified) {
-      return serviceResponse(409, false, "User already exists. Please login.");
-    }
-
     const { otp, hashedOtp, expiresAt } = await generateOtp();
-
-    if (existingUser) {
-      existingUser.emailVerificationToken = hashedOtp;
-      existingUser.emailVerificationTokenExpiry = expiresAt;
-      await existingUser.save();
-      await sendVerificationEmail(email, otp);
-      return serviceResponse(
-        200,
-        true,
-        "A new verification OTP has been sent to your email.",
-      );
-    }
 
     await UserModel.create({
       firstName,
@@ -62,7 +75,9 @@ class AuthService {
       emailVerificationTokenExpiry: expiresAt,
     });
 
-    await sendVerificationEmail(email, otp);
+    if (process.env.NODE_ENV !== "test") {
+      await sendVerificationEmail(email, otp);
+    }
 
     return serviceResponse(
       201,
@@ -183,7 +198,9 @@ class AuthService {
 
     const resetUrl = `${process.env.CLIENT_URL}/resetPassword/${token}`;
 
-    await sendPasswordResetEmail(user.email, resetUrl);
+    if (process.env.NODE_ENV !== "test") {
+      await sendPasswordResetEmail(user.email, resetUrl);
+    }
 
     return serviceResponse(
       200,

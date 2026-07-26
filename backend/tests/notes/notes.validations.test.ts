@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import mongoose from "mongoose";
 import {
   createNoteSchema,
   deleteNoteSchema,
@@ -49,7 +50,7 @@ describe("Notes Validations", () => {
 
     it("Should fail when title is empty", () => {
       const parsed = updateNoteSchema.safeParse({
-        noteId: "123",
+        noteId: new mongoose.Types.ObjectId().toString(),
         title: "",
         content: "Content",
       });
@@ -59,7 +60,7 @@ describe("Notes Validations", () => {
 
     it("Should fail when content is empty", () => {
       const parsed = updateNoteSchema.safeParse({
-        noteId: "123",
+        noteId: new mongoose.Types.ObjectId().toString(),
         title: "Title",
         content: "",
       });
@@ -69,7 +70,7 @@ describe("Notes Validations", () => {
 
     it("Should pass with valid data", () => {
       const parsed = updateNoteSchema.safeParse({
-        noteId: "123",
+        noteId: new mongoose.Types.ObjectId().toString(), // <-- fix
         title: "Updated Note",
         content: "Updated Content",
       });
@@ -89,7 +90,7 @@ describe("Notes Validations", () => {
 
     it("Should pass with valid noteId", () => {
       const parsed = deleteNoteSchema.safeParse({
-        noteId: "123",
+        noteId: new mongoose.Types.ObjectId().toString(), // <-- fix
       });
 
       expect(parsed.success).to.be.true;
@@ -107,7 +108,7 @@ describe("Notes Validations", () => {
 
     it("Should pass with valid noteId", () => {
       const parsed = getSingleNoteSchema.safeParse({
-        noteId: "123",
+        noteId: new mongoose.Types.ObjectId().toString(), // <-- fix
       });
 
       expect(parsed.success).to.be.true;

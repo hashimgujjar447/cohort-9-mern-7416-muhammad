@@ -12,9 +12,9 @@ import logger from "./config/logger.js";
 import connectDb from "./config/db.js";
 
 const port = Number(process.env.PORT);
-const PORT = Number.isInteger(port) && port > 0 ? port : 5000;
+const PORT = Number.isInteger(port) && port > 0 && port < 65535 ? port : 5000;
 
-async function init() {
+async function init(): Promise<void> {
   try {
     await connectDb();
 

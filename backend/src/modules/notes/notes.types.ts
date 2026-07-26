@@ -17,6 +17,8 @@ export interface INotes extends Document {
 export type CreateServiceDTO = {
   title: string;
   content: string;
+  tags?: string[];
+  color?: string;
   user: IJwtPayload;
 };
 
@@ -31,9 +33,12 @@ export type UpdateNoteDTO = {
   noteId: string;
   title: string;
   content: string;
+  tags?: string[];
+  color?: string;
+  isPinned?: boolean;
+  isArchived?: boolean;
   user: IJwtPayload;
 };
-
 export type DeleteNoteDTO = {
   noteId: string;
   user: IJwtPayload;

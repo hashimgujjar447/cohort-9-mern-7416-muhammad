@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 import UserModel from "./auth.model.js";
 import { generateOtp } from "../../utils/generateOtp.js";
@@ -22,6 +23,8 @@ import type {
   ResetPasswordTokenPayload,
   IJwtPayload,
 } from "./auth.types.js";
+import { getEnv } from "../../utils/env.js";
+import logger from "../../config/logger.js";
 
 class AuthService {
   async register(data: RegisterDto): Promise<ServiceResponse> {
@@ -97,7 +100,7 @@ class AuthService {
   > {
     const { email, password } = data;
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email }).select("+password");
 
     if (!user) {
       return serviceResponse(
@@ -129,8 +132,12 @@ class AuthService {
 
     const accessToken = generateAccessToken(tokenPayload);
     const refreshToken = generateRefreshToken(tokenPayload);
+    const hashedRefreshToken = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
 
-    user.refreshToken = refreshToken;
+    user.refreshToken = hashedRefreshToken;
     await user.save();
 
     return serviceResponse(200, true, "Login successful", {
@@ -192,7 +199,7 @@ class AuthService {
 
     const token = jwt.sign(
       { userId: user._id, email: user.email },
-      process.env.PASSWORD_RESET_SECRET as string,
+      getEnv("PASSWORD_RESET_SECRET"),
       { expiresIn: "20m" },
     );
 
@@ -225,7 +232,7 @@ class AuthService {
     try {
       decoded = jwt.verify(
         token,
-        process.env.PASSWORD_RESET_SECRET as string,
+        getEnv("PASSWORD_RESET_SECRET"),
       ) as ResetPasswordTokenPayload;
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
@@ -237,7 +244,9 @@ class AuthService {
       throw error;
     }
 
-    const user = await UserModel.findById(decoded.userId);
+    const user = await UserModel.findById(decoded.userId).select(
+      "+resetPasswordToken +passwordResetTokenExpiry",
+    );
 
     if (!user) {
       return serviceResponse(404, false, "User not found.");
@@ -273,7 +282,7 @@ class AuthService {
     try {
       decoded = jwt.verify(
         refreshToken,
-        process.env.REFRESH_TOKEN_SECRET as string,
+        getEnv("REFRESH_TOKEN_SECRET"),
       ) as IJwtPayload;
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
@@ -283,19 +292,25 @@ class AuthService {
           "Refresh token has expired. Please login again.",
         );
       }
+
       if (error instanceof jwt.JsonWebTokenError) {
         return serviceResponse(401, false, "Invalid refresh token.");
       }
+
       throw error;
     }
 
-    const user = await UserModel.findById(decoded.userId);
+    const hashedRefreshToken = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+
+    const user = await UserModel.findOne({
+      _id: decoded.userId,
+      refreshToken: hashedRefreshToken,
+    });
 
     if (!user) {
-      return serviceResponse(401, false, "User not found.");
-    }
-
-    if (user.refreshToken !== refreshToken) {
       return serviceResponse(
         401,
         false,

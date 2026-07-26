@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { getEnv } from "./env.js";
 
 interface RefreshTokenPayload {
   userId: string;
@@ -17,7 +18,7 @@ export const generateRefreshToken = ({
       email,
       username,
     },
-    process.env.REFRESH_TOKEN_SECRET as string,
+    getEnv("REFRESH_TOKEN_SECRET"),
     {
       expiresIn: "7d", // ya 30d
     },

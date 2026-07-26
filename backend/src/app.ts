@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { pinoHttp } from "pino-http";
 import logger from "./config/logger.js";
 import helmet from "helmet";
@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", AuthRouter);
 app.use("/api/v1/note", NoteRouter);
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Api is working" });
 });
 

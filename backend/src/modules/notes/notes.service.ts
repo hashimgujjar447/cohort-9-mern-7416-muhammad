@@ -16,7 +16,7 @@ class NotesService {
   async createNoteService(
     data: CreateServiceDTO,
   ): Promise<ServiceResponse<{ note: INotes }>> {
-    const { title, content, user } = data;
+    const { title, content, tags, color, user } = data;
 
     const isNoteWithSameTitleAlreadyExist = await Note.findOne({
       user: user.userId,
@@ -34,9 +34,10 @@ class NotesService {
     const note = await Note.create({
       title,
       content,
+      tags,
+      color,
       user: user.userId,
     });
-
     return serviceResponse(201, true, "Note created successfully", {
       note,
     });
@@ -74,7 +75,8 @@ class NotesService {
   async updateNoteService(
     data: UpdateNoteDTO,
   ): Promise<ServiceResponse<{ note: INotes }>> {
-    const { noteId, title, content, user } = data;
+    const { noteId, title, content, tags, color, isPinned, isArchived, user } =
+      data;
 
     const note = await Note.findOne({
       _id: noteId,
@@ -101,6 +103,22 @@ class NotesService {
 
     note.title = title;
     note.content = content;
+
+    if (tags !== undefined) {
+      note.tags = tags;
+    }
+
+    if (color !== undefined) {
+      note.color = color;
+    }
+
+    if (isPinned !== undefined) {
+      note.isPinned = isPinned;
+    }
+
+    if (isArchived !== undefined) {
+      note.isArchived = isArchived;
+    }
 
     await note.save();
 

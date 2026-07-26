@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import crypto from "crypto";
 
 import authService from "../../src/modules/auth/auth.service.js";
 import UserModel from "../../src/modules/auth/auth.model.js";
@@ -22,7 +23,9 @@ describe("AuthService - register()", () => {
       "Registration successful. Please verify your email.",
     );
 
-    const user = await UserModel.findOne({ email: data.email });
+    const user = await UserModel.findOne({
+      email: data.email,
+    }).select("+password");
 
     expect(user).to.not.be.null;
     expect(user!.firstName).to.equal(data.firstName);
@@ -148,7 +151,12 @@ describe("AuthService - login()", () => {
     const user = await UserModel.findOne({ email: data.email });
 
     expect(user).to.not.be.null;
-    expect(user!.refreshToken).to.equal(result.refreshToken);
+    const expectedHashedToken = crypto
+      .createHash("sha256")
+      .update(result.refreshToken!)
+      .digest("hex");
+
+    expect(user!.refreshToken).to.equal(expectedHashedToken);
   });
 
   it("should return invalid credentials if user does not exist", async () => {
@@ -429,7 +437,7 @@ describe("AuthService - changeUserPassword()", () => {
     expect(result.success).to.be.true;
     expect(result.message).to.equal("Password changed successfully.");
 
-    const finalUser = await UserModel.findOne({ email });
+    const finalUser = await UserModel.findOne({ email }).select("+password");
 
     expect(finalUser!.resetPasswordToken).to.be.null;
     expect(finalUser!.passwordResetTokenExpiry).to.be.null;

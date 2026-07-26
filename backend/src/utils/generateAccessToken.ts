@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { getEnv } from "./env.js";
 
 interface AccessTokenPayload {
   userId: string;
@@ -17,7 +18,7 @@ export const generateAccessToken = ({
       email,
       username,
     },
-    process.env.ACCESS_TOKEN_SECRET as string,
+    getEnv("ACCESS_TOKEN_SECRET"),
     {
       expiresIn: "15m",
     },

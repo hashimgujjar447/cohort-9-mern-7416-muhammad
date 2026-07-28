@@ -12,8 +12,8 @@
 
     "skipLibCheck": true,
 
-    "types": ["node"]
+    "types": ["node", "mocha"]
   },
 
-  "include": ["src"]
+  "include": ["src/**/*"]
 }

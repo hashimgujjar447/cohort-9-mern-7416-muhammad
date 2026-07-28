@@ -1,6 +1,6 @@
 import "./env.js";
 import pino from "pino";
-const isDevelopment = process.env.NODE_ENV !== "production";
+const isDevelopment = process.env.NODE_ENV === "development";
 
 const allowedLevels = [
   "fatal",
@@ -12,8 +12,11 @@ const allowedLevels = [
   "silent",
 ] as const;
 
-const logLevel = allowedLevels.includes(process.env.LOG_LEVEL as any)
-  ? process.env.LOG_LEVEL
+type LogLevel = (typeof allowedLevels)[number];
+
+const envLevel = process.env.LOG_LEVEL;
+const logLevel: LogLevel = allowedLevels.includes(envLevel as LogLevel)
+  ? (envLevel as LogLevel)
   : "info";
 
 const logger = pino({

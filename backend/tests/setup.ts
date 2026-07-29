@@ -21,8 +21,10 @@ afterEach(async () => {
   }
 });
 
-after(async () => {
-  await mongoose.disconnect();
-
-  await mongoServer.stop();
+after(async (): Promise<void> => {
+  try {
+    await mongoose.disconnect();
+  } finally {
+    await mongoServer.stop();
+  }
 });

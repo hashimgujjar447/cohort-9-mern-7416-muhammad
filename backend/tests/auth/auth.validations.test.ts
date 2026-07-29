@@ -15,8 +15,9 @@ describe("Auth Validations", () => {
         lastName: "Khan",
         username: "alikhan",
         email: "ali@test.com",
-        password: "123456",
+        password: "12345678",
       });
+
       expect(result.success).to.be.true;
     });
 
@@ -25,8 +26,9 @@ describe("Auth Validations", () => {
         lastName: "Khan",
         username: "alikhan",
         email: "ali@test.com",
-        password: "123456",
+        password: "12345678",
       });
+
       expect(result.success).to.be.false;
     });
 
@@ -36,22 +38,26 @@ describe("Auth Validations", () => {
         lastName: "Khan",
         username: "alikhan",
         email: "not-an-email",
-        password: "123456",
+        password: "12345678",
       });
+
       expect(result.success).to.be.false;
-      expect(result.error!.issues[0].message).to.equal("Invalid email address");
+      expect(result.error!.issues[0].message).to.equal(
+        "Invalid email address.",
+      );
     });
 
-    it("should fail if password is less than 6 characters", () => {
+    it("should fail if password is less than 8 characters", () => {
       const result = registerSchema.safeParse({
         firstName: "Ali",
         lastName: "Khan",
         username: "alikhan",
         email: "ali@test.com",
-        password: "123",
+        password: "1234567",
       });
+
       expect(result.success).to.be.false;
-      expect(result.error!.issues[0].message).to.include("6 characters");
+      expect(result.error!.issues[0].message).to.include("8 characters");
     });
 
     it("should fail if username is less than 3 characters", () => {
@@ -60,8 +66,57 @@ describe("Auth Validations", () => {
         lastName: "Khan",
         username: "ab",
         email: "ali@test.com",
-        password: "123456",
+        password: "12345678",
       });
+
+      expect(result.success).to.be.false;
+    });
+
+    it("should fail if firstName exceeds maximum length", () => {
+      const result = registerSchema.safeParse({
+        firstName: "A".repeat(51),
+        lastName: "Khan",
+        username: "alikhan",
+        email: "ali@test.com",
+        password: "12345678",
+      });
+
+      expect(result.success).to.be.false;
+    });
+
+    it("should fail if lastName exceeds maximum length", () => {
+      const result = registerSchema.safeParse({
+        firstName: "Ali",
+        lastName: "A".repeat(51),
+        username: "alikhan",
+        email: "ali@test.com",
+        password: "12345678",
+      });
+
+      expect(result.success).to.be.false;
+    });
+
+    it("should fail if username exceeds maximum length", () => {
+      const result = registerSchema.safeParse({
+        firstName: "Ali",
+        lastName: "Khan",
+        username: "a".repeat(31),
+        email: "ali@test.com",
+        password: "12345678",
+      });
+
+      expect(result.success).to.be.false;
+    });
+
+    it("should fail if password exceeds maximum length", () => {
+      const result = registerSchema.safeParse({
+        firstName: "Ali",
+        lastName: "Khan",
+        username: "alikhan",
+        email: "ali@test.com",
+        password: "a".repeat(73),
+      });
+
       expect(result.success).to.be.false;
     });
   });
@@ -70,18 +125,25 @@ describe("Auth Validations", () => {
     it("should pass with valid email and password", () => {
       const result = loginSchema.safeParse({
         email: "ali@test.com",
-        password: "123456",
+        password: "12345678",
       });
+
       expect(result.success).to.be.true;
     });
 
     it("should fail if email is missing", () => {
-      const result = loginSchema.safeParse({ password: "123456" });
+      const result = loginSchema.safeParse({
+        password: "12345678",
+      });
+
       expect(result.success).to.be.false;
     });
 
     it("should fail if password is missing", () => {
-      const result = loginSchema.safeParse({ email: "ali@test.com" });
+      const result = loginSchema.safeParse({
+        email: "ali@test.com",
+      });
+
       expect(result.success).to.be.false;
     });
   });
@@ -92,11 +154,15 @@ describe("Auth Validations", () => {
         email: "ali@test.com",
         otpCode: "123456",
       });
+
       expect(result.success).to.be.true;
     });
 
     it("should fail if otpCode is missing", () => {
-      const result = verifyEmailSchema.safeParse({ email: "ali@test.com" });
+      const result = verifyEmailSchema.safeParse({
+        email: "ali@test.com",
+      });
+
       expect(result.success).to.be.false;
     });
   });
@@ -106,6 +172,7 @@ describe("Auth Validations", () => {
       const result = resetPasswordRequestSchema.safeParse({
         email: "ali@test.com",
       });
+
       expect(result.success).to.be.true;
     });
 
@@ -113,6 +180,7 @@ describe("Auth Validations", () => {
       const result = resetPasswordRequestSchema.safeParse({
         email: "invalid",
       });
+
       expect(result.success).to.be.false;
     });
   });
@@ -123,6 +191,7 @@ describe("Auth Validations", () => {
         password: "newpass123",
         confirmPassword: "newpass123",
       });
+
       expect(result.success).to.be.true;
     });
 
@@ -131,6 +200,7 @@ describe("Auth Validations", () => {
         password: "newpass123",
         confirmPassword: "different",
       });
+
       expect(result.success).to.be.false;
       expect(result.error!.issues[0].message).to.equal(
         "Passwords do not match",
@@ -142,6 +212,7 @@ describe("Auth Validations", () => {
         password: "123",
         confirmPassword: "123",
       });
+
       expect(result.success).to.be.false;
     });
   });

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import logger from "./logger.js";
 import dns from "node:dns/promises";
 
-async function connectDb() {
+async function connectDb(): Promise<void> {
   try {
     await mongoose.connect(process.env.MONGO_URI!);
 

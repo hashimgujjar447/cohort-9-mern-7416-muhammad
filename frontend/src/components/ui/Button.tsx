@@ -5,6 +5,7 @@ type ButtonProps = {
   className?: string;
   children: React.ReactNode;
   Icon?: LucideIcon;
+  handleClick?: () => void;
 };
 
 const Button = ({
@@ -12,9 +13,11 @@ const Button = ({
   className,
   children,
   Icon,
+  handleClick,
 }: ButtonProps) => {
   return (
     <button
+      onClick={handleClick}
       type={type}
       className={`flex items-center justify-center gap-2  px-4 py-2 ${className}`}
     >

@@ -175,13 +175,31 @@ class AuthController {
         sameSite: "lax",
       });
 
-      return res.status(200).json({ success: true, message: "Logout successful" });
+      return res
+        .status(200)
+        .json({ success: true, message: "Logout successful" });
     } catch (error) {
       console.error(error);
       return res
         .status(500)
         .json({ success: false, message: "Internal server error." });
     }
+  }
+  async getProfile(req: Request, res: Response) {
+    const user = req.user;
+    if (!user) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Please login first to logout" });
+    }
+
+    const result = await authService.profile(user);
+
+    return res.status(result.status).set("Cache-Control", "no-store").json({
+      success: result.success,
+      message: result.message,
+      data: result.user,
+    });
   }
 }
 

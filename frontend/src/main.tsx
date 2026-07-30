@@ -4,6 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./app/router";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
+import AuthInitializer from "./providers/AuthInitializer";
 import "./index.css";
 import { Toaster } from "react-hot-toast";
 createRoot(document.getElementById("root")!).render(
@@ -16,7 +17,9 @@ createRoot(document.getElementById("root")!).render(
           duration: 3000,
         }}
       />
-      <RouterProvider router={router} />
+      <AuthInitializer>
+        <RouterProvider router={router} />
+      </AuthInitializer>
     </Provider>
   </StrictMode>,
 );

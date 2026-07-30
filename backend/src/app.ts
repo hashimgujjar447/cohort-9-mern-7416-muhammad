@@ -6,9 +6,17 @@ import cookieParser from "cookie-parser";
 import AuthRouter from "./modules/auth/auth.routes.js";
 import NoteRouter from "./modules/notes/notes.routes.js";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler.js";
+import cors from "cors";
 
 const app = express();
+app.set("etag", false);
 
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 app.use(helmet());
 app.use(cookieParser());
 

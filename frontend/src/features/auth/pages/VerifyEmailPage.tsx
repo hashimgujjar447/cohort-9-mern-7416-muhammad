@@ -1,9 +1,20 @@
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Button from "../../../components/ui/Button";
+import { useVerifyEmailMutation } from "../../../store/services/auth.api";
+import { verifyEmailSchema } from "../auth.validation";
+import toast from "react-hot-toast";
 
 const VerifyEmailPage = () => {
+  const navigate = useNavigate();
+  const [verifyEmail, { isLoading }] = useVerifyEmailMutation();
+  const { state } = useLocation();
+
+  if (!state?.email) {
+    return <Navigate to="/register" replace />;
+  }
+
   const [otpCode, setOtpCode] = useState(Array(6).fill(""));
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -29,6 +40,37 @@ const VerifyEmailPage = () => {
     }
   };
 
+  const handleVerifyAccount = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const isAllCodeAvailable = otpCode.every((item) => item !== "");
+      if (!isAllCodeAvailable) {
+        return toast.error("Please enter a valid otp of length 6");
+      }
+      const otp = otpCode.join("");
+      const data = {
+        otpCode: otp,
+        email: state?.email,
+      };
+
+      const parsedData = await verifyEmailSchema.safeParse(data);
+
+      if (!parsedData.success) {
+        return toast.error(parsedData.error.issues[0].message);
+      }
+
+      const res = await verifyEmail(parsedData.data).unwrap();
+
+      toast.success(res.message);
+      navigate("/login");
+    } catch (error: any) {
+      console.log(error);
+      toast.error(
+        error?.data?.message ?? "Something went wrong. Please try again.",
+      );
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-primary-bg px-4">
       <div className="w-full max-w-md">
@@ -40,7 +82,7 @@ const VerifyEmailPage = () => {
           Please enter the 6-digit code sent to your email.
         </p>
 
-        <form className="mt-8 space-y-6">
+        <form className="mt-8 space-y-6" onSubmit={handleVerifyAccount}>
           <div className="flex justify-center gap-3">
             {otpCode.map((digit, index) => (
               <input
@@ -63,7 +105,7 @@ const VerifyEmailPage = () => {
             type="submit"
             className="w-full rounded-full bg-secondary-text py-3 text-white transition hover:opacity-90"
           >
-            Verify
+            {isLoading ? "Verifying ..." : "Verify"}
           </Button>
         </form>
 

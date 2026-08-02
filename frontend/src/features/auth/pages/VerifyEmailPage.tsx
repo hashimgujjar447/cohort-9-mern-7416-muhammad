@@ -11,13 +11,12 @@ const VerifyEmailPage = () => {
   const [verifyEmail, { isLoading }] = useVerifyEmailMutation();
   const { state } = useLocation();
 
+  const [otpCode, setOtpCode] = useState(Array(6).fill(""));
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   if (!state?.email) {
     return <Navigate to="/register" replace />;
   }
-
-  const [otpCode, setOtpCode] = useState(Array(6).fill(""));
-
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleChange = (value: string, index: number) => {
     if (!/^\d?$/.test(value)) return;

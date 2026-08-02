@@ -27,7 +27,6 @@ export const registerSchema = z.object({
 
   password: z
     .string()
-    .trim()
     .min(8, "Password must be at least 8 characters.")
     .max(72, "Password cannot exceed 72 characters."),
 });
@@ -41,7 +40,6 @@ export const loginSchema = z.object({
 
   password: z
     .string()
-    .trim()
     .min(8, "Password must be at least 8 characters.")
     .max(72, "Password cannot exceed 72 characters."),
 });

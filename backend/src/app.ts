@@ -11,6 +11,16 @@ import cors from "cors";
 const app = express();
 app.set("etag", false);
 
+if (!process.env.CLIENT_URL) {
+  throw new Error("CLIENT_URL environment variable is required");
+}
+
+try {
+  new URL(process.env.CLIENT_URL);
+} catch {
+  throw new Error("CLIENT_URL must be a valid URL");
+}
+
 app.use(
   cors({
     origin: process.env.CLIENT_URL,

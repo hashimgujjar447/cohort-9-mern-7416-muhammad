@@ -42,7 +42,7 @@ const RequestResetPasswordPage = () => {
           Enter your email address and we'll send you a password reset link.
         </p>
 
-        <form className="mt-8 space-y-5" onClick={handleForgotPasswordForm}>
+        <form className="mt-8 space-y-5" onSubmit={handleForgotPasswordForm}>
           <Input
             value={email}
             onChange={(e) => setEmail(e.target.value)}

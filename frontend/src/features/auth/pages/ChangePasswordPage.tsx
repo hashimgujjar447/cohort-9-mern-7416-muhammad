@@ -14,7 +14,10 @@ const ChangePasswordPage = () => {
 
   const [changePassword, { isLoading }] = useChangePasswordMutation();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    password: string;
+    confirmPassword: string;
+  }>({
     password: "",
     confirmPassword: "",
   });

@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
+import Header from "./Header";
 
 const AuthenticatedLayout = () => {
   const location = useLocation();
@@ -15,7 +16,12 @@ const AuthenticatedLayout = () => {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  return <Outlet />;
+  return (
+    <div className="px-15 py-3">
+      <Header />
+      <Outlet />
+    </div>
+  );
 };
 
 export default AuthenticatedLayout;

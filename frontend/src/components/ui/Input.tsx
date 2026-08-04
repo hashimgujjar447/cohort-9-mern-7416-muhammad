@@ -23,7 +23,7 @@ const Input = ({
       {Icon && (
         <Icon
           size={18}
-          className="absolute top-1/2 left-6 -translate-y-1/2 text-gray-400"
+          className="absolute top-1/2 left-5 -translate-y-1/2 text-gray-400"
         />
       )}
 
@@ -33,7 +33,7 @@ const Input = ({
         value={value}
         onChange={onChange}
         className={`w-full rounded-full border bg-white border-gray-300 py-3 ${
-          Icon ? "pl-14" : "pl-3"
+          Icon ? "pl-13" : "pl-3"
         } pr-3 outline-none focus:border-blue-500 ${style}`}
       />
     </div>

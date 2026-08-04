@@ -1,5 +1,5 @@
 import { Mail } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";

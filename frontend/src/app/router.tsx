@@ -9,6 +9,7 @@ import RegisterPage from "../features/auth/pages/RegisterPage";
 import ChangePasswordPage from "../features/auth/pages/ChangePasswordPage";
 import RequestResetPasswordPage from "../features/auth/pages/RequestResetPasswordPage";
 import VerifyEmailPage from "../features/auth/pages/VerifyEmailPage";
+import NoteDetailPage from "../features/notes/pages/NoteDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/notes/:noteId",
+        element: <NoteDetailPage />,
       },
     ],
   },

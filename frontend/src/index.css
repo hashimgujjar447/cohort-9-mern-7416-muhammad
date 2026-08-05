@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --color-app-bg: #ebf5ff;
+  --color-placeholder-text: #9ca3af;
+  --color-primary-text: #4b5563;
+  --color-secondary-text: #4b5563;
+  --color-text-blue: #2563eb;
+}

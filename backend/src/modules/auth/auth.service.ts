@@ -22,9 +22,9 @@ import type {
   ChangePasswordDto,
   ResetPasswordTokenPayload,
   IJwtPayload,
+  IUser,
 } from "./auth.types.js";
 import { getEnv } from "../../utils/env.js";
-import logger from "../../config/logger.js";
 
 class AuthService {
   async register(data: RegisterDto): Promise<ServiceResponse> {
@@ -38,6 +38,17 @@ class AuthService {
           409,
           false,
           "User already exists. Please login.",
+        );
+      }
+      if (
+        existingUser.emailVerificationTokenExpiry &&
+        new Date(existingUser.emailVerificationTokenExpiry).getTime() >
+          Date.now()
+      ) {
+        return serviceResponse(
+          200,
+          true,
+          "A email verification OTP is already send on your email please check",
         );
       }
 
@@ -103,11 +114,7 @@ class AuthService {
     const user = await UserModel.findOne({ email }).select("+password");
 
     if (!user) {
-      return serviceResponse(
-        401,
-        false,
-        "Invalid credentials please register or enter correct credentials",
-      );
+      return serviceResponse(401, false, "Invalid email or password.");
     }
 
     if (!user.isVerified) {
@@ -121,7 +128,7 @@ class AuthService {
     const isPasswordMatch = await user.comparePassword(password);
 
     if (!isPasswordMatch) {
-      return serviceResponse(401, false, "Please enter a correct password");
+      return serviceResponse(401, false, "Invalid email or password.");
     }
 
     const tokenPayload = {
@@ -211,7 +218,7 @@ class AuthService {
 
     await user.save();
 
-    const resetUrl = `${process.env.CLIENT_URL}/resetPassword/${token}`;
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
     if (process.env.NODE_ENV !== "test") {
       await sendPasswordResetEmail(user.email, resetUrl);
@@ -332,6 +339,20 @@ class AuthService {
   async logout(userId: string): Promise<ServiceResponse> {
     await UserModel.findByIdAndUpdate(userId, { refreshToken: null });
     return serviceResponse(200, true, "Logout successful");
+  }
+
+  async profile(user: IJwtPayload): Promise<ServiceResponse<{ user: IUser }>> {
+    const userDetail = await UserModel.findById(user.userId).select(
+      "_id firstName lastName username email isVerified createdAt updatedAt",
+    );
+
+    if (!userDetail) {
+      return serviceResponse(404, false, "User not found");
+    }
+
+    return serviceResponse(200, true, "User found", {
+      user: userDetail,
+    });
   }
 }
 

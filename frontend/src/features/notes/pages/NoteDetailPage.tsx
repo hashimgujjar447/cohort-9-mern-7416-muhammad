@@ -1,0 +1,174 @@
+import {
+  ArrowLeft,
+  Calendar,
+  Edit,
+  Tag,
+  Trash2,
+  Pin,
+  Archive,
+} from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+
+import {
+  useDeleteNoteMutation,
+  useGetSingleNoteQuery,
+} from "../../../store/services/notes.api";
+import { useAppSelector } from "../../../store/hooks";
+
+const NoteDetailPage = () => {
+  const navigate = useNavigate();
+  const { noteId } = useParams();
+
+  const user = useAppSelector((state) => state.auth.user);
+
+  const [deleteNote, { isLoading: isDeleteNoteLoading }] =
+    useDeleteNoteMutation();
+
+  const { data, isLoading, isError } = useGetSingleNoteQuery(noteId ?? "", {
+    skip: !noteId,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[70vh] items-center justify-center">
+        <h1 className="text-xl font-semibold">Loading...</h1>
+      </div>
+    );
+  }
+
+  if (isError || !data?.note) {
+    return (
+      <div className="flex h-[70vh] items-center justify-center">
+        <h1 className="text-xl font-semibold text-red-500">Note not found.</h1>
+      </div>
+    );
+  }
+
+  const note = data.note;
+
+  const createdDate = note.createdAt
+    ? new Date(note.createdAt).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "N/A";
+
+  const handleDeleteNote = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this note?",
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const res = await deleteNote({ noteId: note._id }).unwrap();
+
+      toast.success(res.message);
+      navigate("/");
+    } catch (error: any) {
+      toast.error(error?.data?.message ?? "Something went wrong.");
+    }
+  };
+
+  return (
+    <div className="mx-auto mt-10 max-w-5xl rounded-3xl bg-white p-10 shadow-lg">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-600 transition hover:text-blue-600"
+        >
+          <ArrowLeft size={18} />
+          Back
+        </button>
+
+        <div className="flex items-center gap-3">
+          <Link
+            to={`/notes/${note._id}/edit`}
+            className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600"
+          >
+            <Edit size={18} />
+            Edit
+          </Link>
+
+          <button
+            onClick={handleDeleteNote}
+            disabled={isDeleteNoteLoading}
+            className="flex cursor-pointer items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Trash2 size={18} />
+            {isDeleteNoteLoading ? "Deleting..." : "Delete"}
+          </button>
+        </div>
+      </div>
+
+      <h1 className="mt-8 text-4xl font-bold text-secondary-text">
+        {note.title}
+      </h1>
+
+      <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-gray-500">
+        <div className="flex items-center gap-2">
+          <Calendar size={16} />
+          {createdDate}
+        </div>
+
+        {note.color && (
+          <div className="flex items-center gap-2">
+            <span>Color</span>
+            <div
+              className="h-5 w-5 rounded-full border"
+              style={{ backgroundColor: note.color }}
+            />
+          </div>
+        )}
+
+        {note.isPinned && (
+          <span className="flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
+            <Pin size={14} />
+            Pinned
+          </span>
+        )}
+
+        {note.isArchived && (
+          <span className="flex items-center gap-1 rounded-full bg-gray-200 px-3 py-1 text-xs font-medium text-gray-700">
+            <Archive size={14} />
+            Archived
+          </span>
+        )}
+      </div>
+
+      {note.tags.length > 0 && (
+        <div className="mt-8 flex flex-wrap gap-2">
+          {note.tags.map((tag: string) => (
+            <span
+              key={tag}
+              className="flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700"
+            >
+              <Tag size={14} />
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-8 rounded-2xl bg-gray-50 p-6">
+        <p className="whitespace-pre-wrap leading-8 text-gray-700">
+          {note.content}
+        </p>
+      </div>
+
+      <div className="mt-8 border-t pt-6 text-sm text-gray-500">
+        <p>
+          Created by{" "}
+          <span className="font-semibold text-secondary-text">
+            {user?.username}
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default NoteDetailPage;

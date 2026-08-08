@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import Header from "./Header";
+import { ClipLoader } from "react-spinners";
 
 const AuthenticatedLayout = () => {
   const location = useLocation();
@@ -10,7 +11,13 @@ const AuthenticatedLayout = () => {
   );
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-[70vh] flex-col items-center justify-center">
+        <ClipLoader size={24} />
+
+        <p className="text-lg font-medium">Loading ...</p>
+      </div>
+    );
   }
   if (!isAuthenticated || !accessToken) {
     return <Navigate to="/login" replace state={{ from: location }} />;

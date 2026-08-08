@@ -10,6 +10,9 @@ import ChangePasswordPage from "../features/auth/pages/ChangePasswordPage";
 import RequestResetPasswordPage from "../features/auth/pages/RequestResetPasswordPage";
 import VerifyEmailPage from "../features/auth/pages/VerifyEmailPage";
 import NoteDetailPage from "../features/notes/pages/NoteDetailPage";
+import NoteEditPage from "../features/notes/pages/NoteEditPage";
+import CreateNotePage from "../features/notes/pages/CreateNotePage";
+import ProfilePage from "../features/user/pages/ProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +50,18 @@ export const router = createBrowserRouter([
       {
         path: "/notes/:noteId",
         element: <NoteDetailPage />,
+      },
+      {
+        path: "/notes/:noteId/edit",
+        element: <NoteEditPage />,
+      },
+      {
+        path: "/notes/create",
+        element: <CreateNotePage />,
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage />,
       },
     ],
   },

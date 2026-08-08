@@ -35,6 +35,9 @@ export const notesApi = baseApi.injectEndpoints({
         url: `/note/${noteId}`,
         method: "GET",
       }),
+      providesTags: (_result, _error, noteId) => [
+        { type: "singleNote", id: noteId },
+      ],
     }),
 
     updateNote: builder.mutation<UpdateNoteResponse, IUpdateNoteRequest>({
@@ -43,7 +46,10 @@ export const notesApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["notes"],
+      invalidatesTags: (_result, _error, { noteId }) => [
+        "notes",
+        { type: "singleNote", id: noteId },
+      ],
     }),
 
     deleteNote: builder.mutation<DeleteNoteResponse, IDeleteNoteRequest>({

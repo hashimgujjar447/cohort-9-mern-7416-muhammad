@@ -6,7 +6,6 @@ interface NoteCardProps {
 }
 
 const NoteCard = ({ note }: NoteCardProps) => {
-  const date = new Date(note.createdAt);
   const formattedDate = note.createdAt
     ? new Date(note.createdAt).toLocaleDateString("en-US", {
         month: "short",
@@ -22,7 +21,10 @@ const NoteCard = ({ note }: NoteCardProps) => {
     >
       <h2 className="text-2xl font-bold text-secondary-text">{note.title}</h2>
       <div className="mt-4 flex-1">
-        <p className="line-clamp-4 text-sm text-gray-700">{note.content}</p>
+        <p
+          className="line-clamp-4 text-sm text-gray-700"
+          dangerouslySetInnerHTML={{ __html: note.content }}
+        ></p>
       </div>
 
       <div className="mt-auto flex items-center justify-between">

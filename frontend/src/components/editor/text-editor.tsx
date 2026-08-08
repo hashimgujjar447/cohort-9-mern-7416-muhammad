@@ -59,26 +59,26 @@ const Tiptap = ({
   });
 
   useEffect(() => {
-    if (!editor || content === undefined) {
+    if (!editor) {
       return;
     }
 
-    if (editor.getHTML() === content) {
+    const isHtml = /<[a-z][\s\S]*>/i.test(content);
+
+    const formattedContent = isHtml
+      ? content
+      : content
+          .split("\n")
+          .map((line) => `<p>${line || "<br>"}</p>`)
+          .join("");
+
+    if (editor.getHTML() === formattedContent) {
       return;
     }
 
-    const formattedContent =
-      content.includes("<h") ||
-      content.includes("<p") ||
-      content.includes("<ul") ||
-      content.includes("<ol")
-        ? content
-        : content
-            .split("\n")
-            .map((line) => `<p>${line || "<br>"}</p>`)
-            .join("");
-
-    editor.commands.setContent(formattedContent);
+    editor.commands.setContent(formattedContent, {
+      emitUpdate: false,
+    });
   }, [content, editor]);
 
   if (!editor) {

@@ -70,11 +70,28 @@ const NoteEditPage = () => {
     toast.success("Tag removed");
   };
 
+  const isEmptyHtml = (html: string) =>
+    html
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/g, " ")
+      .trim().length === 0;
+
   const handleUpdate = async () => {
+    if (!noteId) {
+      return toast.error("Note Id is required");
+    }
+
+    if (!title.trim()) {
+      toast.error("Title is required");
+      return;
+    }
+
+    if (isEmptyHtml(content)) {
+      toast.error("Content is required");
+      return;
+    }
+
     try {
-      if (!noteId) {
-        return toast.error("Note Id is required");
-      }
       const payload = {
         title,
         content,
@@ -84,7 +101,10 @@ const NoteEditPage = () => {
         isDeleted,
       };
 
-      const res = await updateNote({ noteId: noteId, ...payload }).unwrap();
+      const res = await updateNote({
+        noteId,
+        ...payload,
+      }).unwrap();
 
       toast.success(res.message || "Note Update successfully");
     } catch (error) {
@@ -92,7 +112,6 @@ const NoteEditPage = () => {
       toast.error("Something went wrong");
     }
   };
-
   if (isLoading) {
     return (
       <div className="flex h-[70vh] flex-col items-center justify-center">
@@ -206,6 +225,7 @@ const NoteEditPage = () => {
 
       <Button
         handleClick={handleUpdate}
+        disabled={updateNoteLoading ? true : false}
         className="w-full rounded-xl bg-text-blue py-3 text-white"
       >
         {updateNoteLoading ? "Updating Note ... " : "Update Note"}

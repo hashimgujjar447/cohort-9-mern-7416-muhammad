@@ -6,6 +6,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   Icon?: LucideIcon;
   handleClick?: () => void;
+  disabled?: boolean;
 }
 
 const Button = ({

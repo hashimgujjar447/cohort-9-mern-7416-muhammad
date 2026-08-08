@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { INote } from "../types";
-
+import { sanitizeHtml } from "../../../utils/sanitizeHtml";
 interface NoteCardProps {
   note: INote;
 }
@@ -21,10 +21,12 @@ const NoteCard = ({ note }: NoteCardProps) => {
     >
       <h2 className="text-2xl font-bold text-secondary-text">{note.title}</h2>
       <div className="mt-4 flex-1">
-        <p
+        <div
           className="line-clamp-4 text-sm text-gray-700"
-          dangerouslySetInnerHTML={{ __html: note.content }}
-        ></p>
+          dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(note.content),
+          }}
+        />
       </div>
 
       <div className="mt-auto flex items-center justify-between">

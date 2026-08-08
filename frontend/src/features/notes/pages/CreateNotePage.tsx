@@ -20,6 +20,12 @@ const CreateNotePage = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [tag, setTag] = useState("");
 
+  const isEmptyHtml = (html: string) => {
+    const text =
+      new DOMParser().parseFromString(html, "text/html").body.textContent ?? "";
+    return text.replace(/\u00a0/g, " ").trim().length === 0;
+  };
+
   const handleAddTag = () => {
     const newTag = tag.trim();
 
@@ -56,7 +62,7 @@ const CreateNotePage = () => {
       return;
     }
 
-    if (!content.trim()) {
+    if (isEmptyHtml(content)) {
       toast.error("Content is required");
       return;
     }

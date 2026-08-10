@@ -1,48 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronLeft, X } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import Tiptap from "../../../components/editor/text-editor";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 
-import {
-  useGetSingleNoteQuery,
-  useUpdateNoteMutation,
-} from "../../../store/services/notes.api";
-import { ClipLoader } from "react-spinners";
+import { useCreateNoteMutation } from "../../../store/services/notes.api";
 
-const NoteEditPage = () => {
-  const { noteId } = useParams();
+const CreateNotePage = () => {
   const navigate = useNavigate();
 
-  const { data, isLoading } = useGetSingleNoteQuery(noteId!);
-  const [updateNote, { isLoading: updateNoteLoading }] =
-    useUpdateNoteMutation();
+  const [createNote, { isLoading: createNoteLoading }] =
+    useCreateNoteMutation();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tag, setTag] = useState("");
 
-  const [isPinned, setIsPinned] = useState(false);
-  const [isArchived, setIsArchived] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
-
-  useEffect(() => {
-    if (!data?.note) return;
-
-    const note = data.note;
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTitle(note.title);
-    setContent(note.content);
-    setTags(note.tags ?? []);
-    setIsPinned(note.isPinned);
-    setIsArchived(note.isArchived);
-    setIsDeleted(note.isDeleted);
-  }, [data]);
+  const isEmptyHtml = (html: string) => {
+    const text =
+      new DOMParser().parseFromString(html, "text/html").body.textContent ?? "";
+    return text.replace(/\u00a0/g, " ").trim().length === 0;
+  };
 
   const handleAddTag = () => {
     const newTag = tag.trim();
@@ -52,7 +34,9 @@ const NoteEditPage = () => {
       return;
     }
 
-    const exists = tags.some((t) => t.toLowerCase() === newTag.toLowerCase());
+    const exists = tags.some(
+      (existingTag) => existingTag.toLowerCase() === newTag.toLowerCase(),
+    );
 
     if (exists) {
       toast.error("Tag already exists");
@@ -66,21 +50,13 @@ const NoteEditPage = () => {
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags((prev) => prev.filter((t) => t !== tagToRemove));
+    setTags((prev) =>
+      prev.filter((existingTag) => existingTag !== tagToRemove),
+    );
     toast.success("Tag removed");
   };
 
-  const isEmptyHtml = (html: string) =>
-    html
-      .replace(/<[^>]*>/g, "")
-      .replace(/&nbsp;/g, " ")
-      .trim().length === 0;
-
-  const handleUpdate = async () => {
-    if (!noteId) {
-      return toast.error("Note Id is required");
-    }
-
+  const handleCreate = async () => {
     if (!title.trim()) {
       toast.error("Title is required");
       return;
@@ -92,39 +68,25 @@ const NoteEditPage = () => {
     }
 
     try {
-      const payload = {
-        title,
+      const res = await createNote({
+        title: title.trim(),
         content,
         tags,
-        isPinned,
-        isArchived,
-        isDeleted,
-      };
-
-      const res = await updateNote({
-        noteId,
-        ...payload,
       }).unwrap();
 
-      toast.success(res.message || "Note Update successfully");
+      toast.success(res.message || "Note created successfully");
+
+      navigate("/");
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
     }
   };
-  if (isLoading) {
-    return (
-      <div className="flex h-[70vh] flex-col items-center justify-center">
-        <ClipLoader size={24} />
-
-        <p className="text-lg font-medium">Loading ...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto mt-6 max-w-5xl rounded-3xl bg-white p-8 shadow-lg">
       <button
+        type="button"
         onClick={() => navigate(-1)}
         className="mb-6 flex items-center gap-2 text-lg transition hover:text-text-blue"
       >
@@ -172,6 +134,7 @@ const NoteEditPage = () => {
           </div>
 
           <Button
+            type="button"
             handleClick={handleAddTag}
             className="rounded-xl bg-text-blue px-6 text-white"
           >
@@ -199,39 +162,16 @@ const NoteEditPage = () => {
         </div>
       </div>
 
-      <div className="mb-8 flex flex-wrap gap-4">
-        <Button
-          handleClick={() => setIsPinned((prev) => !prev)}
-          className={`rounded-xl px-5 ${
-            isPinned
-              ? "bg-blue-600 text-white"
-              : "border border-gray-300 bg-white"
-          }`}
-        >
-          {isPinned ? "Pinned" : "Pin Note"}
-        </Button>
-
-        <Button
-          handleClick={() => setIsArchived((prev) => !prev)}
-          className={`rounded-xl px-5 ${
-            isArchived
-              ? "bg-green-600 text-white"
-              : "border border-gray-300 bg-white"
-          }`}
-        >
-          {isArchived ? "Archived" : "Archive Note"}
-        </Button>
-      </div>
-
       <Button
-        handleClick={handleUpdate}
-        disabled={updateNoteLoading ? true : false}
+        type="button"
+        handleClick={handleCreate}
+        disabled={createNoteLoading}
         className="w-full rounded-xl bg-text-blue py-3 text-white"
       >
-        {updateNoteLoading ? "Updating Note ... " : "Update Note"}
+        {createNoteLoading ? `Creating Note ...` : "Create Note"}
       </Button>
     </div>
   );
 };
 
-export default NoteEditPage;
+export default CreateNotePage;

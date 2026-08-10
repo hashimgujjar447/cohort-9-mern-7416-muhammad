@@ -15,6 +15,7 @@ import {
   useGetSingleNoteQuery,
 } from "../../../store/services/notes.api";
 import { useAppSelector } from "../../../store/hooks";
+import { ClipLoader } from "react-spinners";
 
 const NoteDetailPage = () => {
   const navigate = useNavigate();
@@ -31,8 +32,10 @@ const NoteDetailPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-[70vh] items-center justify-center">
-        <h1 className="text-xl font-semibold">Loading...</h1>
+      <div className="flex h-[70vh] flex-col items-center justify-center">
+        <ClipLoader size={24} />
+
+        <p className="text-lg font-medium">Loading note detail...</p>
       </div>
     );
   }
@@ -154,9 +157,19 @@ const NoteDetailPage = () => {
       )}
 
       <div className="mt-8 rounded-2xl bg-gray-50 p-6">
-        <p className="whitespace-pre-wrap leading-8 text-gray-700">
-          {note.content}
-        </p>
+        <div
+          className="
+    leading-8 text-gray-700
+    [&_h1]:text-3xl [&_h1]:font-bold
+    [&_h2]:text-2xl [&_h2]:font-bold
+    [&_h3]:text-xl [&_h3]:font-semibold
+    [&_p]:mb-3
+    [&_ul]:list-disc [&_ul]:pl-6
+    [&_ol]:list-decimal [&_ol]:pl-6
+    [&_strong]:font-bold
+  "
+          dangerouslySetInnerHTML={{ __html: note.content }}
+        />
       </div>
 
       <div className="mt-8 border-t pt-6 text-sm text-gray-500">

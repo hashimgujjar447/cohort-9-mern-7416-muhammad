@@ -1,5 +1,5 @@
 import Input from "../../../components/ui/Input";
-import { Lock, Mail, UserRound } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
 import Button from "../../../components/ui/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, type FormEvent } from "react";

@@ -1,25 +1,27 @@
 import type { LucideIcon } from "lucide-react";
-import type { ChangeEvent } from "react";
+import type { InputHTMLAttributes } from "react";
 
-type InputParams = {
+export interface InputParams extends InputHTMLAttributes<HTMLInputElement> {
   type?: string;
-  placeholder: string;
+  placeholder?: string;
   style?: string;
   icon?: LucideIcon;
-  value: string | number;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-};
+  value?: string | number;
+}
 
 const Input = ({
   type = "text",
-  style,
+  style = "",
+  className = "",
   icon: Icon,
   placeholder,
   value,
+  disabled,
   onChange,
+  ...props
 }: InputParams) => {
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {Icon && (
         <Icon
           size={18}
@@ -28,13 +30,15 @@ const Input = ({
       )}
 
       <input
+        {...props}
         type={type}
         placeholder={placeholder}
         value={value}
+        disabled={disabled}
         onChange={onChange}
-        className={`w-full rounded-full border bg-white border-gray-300 py-3 ${
-          Icon ? "pl-13" : "pl-3"
-        } pr-3 outline-none focus:border-blue-500 ${style}`}
+        className={`w-full rounded-full border border-gray-300 bg-white py-3 ${
+          Icon ? "pl-13" : "pl-4"
+        } pr-4 outline-none focus:border-blue-500 ${style} ${className}`}
       />
     </div>
   );

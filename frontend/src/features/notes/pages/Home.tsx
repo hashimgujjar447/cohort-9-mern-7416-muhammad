@@ -1,12 +1,15 @@
 import { useGetNotesQuery } from "../../../store/services/notes.api";
 import NoteCard from "../components/NoteCard";
+import { ClipLoader } from "react-spinners";
 
 const Home = () => {
   const { data, isLoading, isError } = useGetNotesQuery();
 
   if (isLoading) {
     return (
-      <div className="flex h-[70vh] items-center justify-center">
+      <div className="flex h-[70vh] flex-col items-center justify-center">
+        <ClipLoader size={24} />
+
         <p className="text-lg font-medium">Loading notes...</p>
       </div>
     );

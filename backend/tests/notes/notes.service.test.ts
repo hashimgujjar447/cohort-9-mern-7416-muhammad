@@ -1,6 +1,8 @@
 import { expect } from "chai";
 import notesService from "../../src/modules/notes/notes.service.js";
 import { Note } from "../../src/modules/notes/notes.model.js";
+import type { ServiceResponse } from "../../src/utils/apiResponse.js";
+import type { INotes } from "../../src/modules/notes/notes.types.js";
 
 describe("Notes Service", () => {
   describe("Notes Service - CreateNote()", () => {
@@ -47,7 +49,7 @@ describe("Notes Service", () => {
         user: "6884d5a6c123456789abcdef",
       });
 
-      const data = await notesService.getAllNotesService({ user });
+      const data: ServiceResponse<{ notes: INotes[] }> = await notesService.getAllNotesService({ user });
 
       expect(data.status).to.equal(200);
       expect(data.success).to.be.true;

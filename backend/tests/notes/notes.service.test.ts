@@ -47,7 +47,7 @@ describe("Notes Service", () => {
         user: "6884d5a6c123456789abcdef",
       });
 
-      const data = await notesService.getAllNotesService(user);
+      const data = await notesService.getAllNotesService({ user });
 
       expect(data.status).to.equal(200);
       expect(data.success).to.be.true;

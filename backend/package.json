@@ -8,7 +8,7 @@
     "build": "tsc --project tsconfig.build.json",
     "start": "node dist/server.js",
     "test": "mocha --require tsx/esm --file tests/setup.ts \"tests/**/*.test.ts\" --timeout 10000",
-    "test:coverage": "c8 --reporter=text --reporter=html --reporter=lcov npm test"
+    "test:coverage": "c8 --all --src=src --reporter=text --reporter=html --reporter=lcov npm test"
   },
   "keywords": [],
   "author": "",

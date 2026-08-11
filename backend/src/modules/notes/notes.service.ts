@@ -47,22 +47,28 @@ class NotesService {
     user,
     search,
   }: GetAllNotesDTO): Promise<ServiceResponse<{ notes: INotes[] }>> {
-    const filter: Record<string, unknown> = {
-      user: user.userId,
-    };
-    if (search) {
-      filter.$or = [
-        { title: { $regex: search, $options: "i" } },
-        { content: { $regex: search, $options: "i" } },
-        { tags: { $regex: search, $options: "i" } },
-      ];
+    try {
+      const filter: Record<string, unknown> = {
+        user: user.userId,
+      };
+
+      if (search) {
+        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        filter.$or = [
+          { title: { $regex: escapedSearch, $options: "i" } },
+          { content: { $regex: escapedSearch, $options: "i" } },
+          { tags: { $regex: escapedSearch, $options: "i" } },
+        ];
+      }
+
+      const notes = await Note.find(filter);
+
+      return serviceResponse(200, true, "All notes fetched successfully", {
+        notes,
+      });
+    } catch {
+      return serviceResponse(500, false, "Failed to fetch notes");
     }
-
-    const notes = await Note.find(filter);
-
-    return serviceResponse(200, true, "All notes fetched successfully", {
-      notes,
-    });
   }
 
   async getSingleNoteService(

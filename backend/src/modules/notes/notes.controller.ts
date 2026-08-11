@@ -44,7 +44,8 @@ class NotesController {
         typeof req.query.search === "string"
           ? req.query.search.trim()
           : undefined;
-      console.log("Search query ", search);
+
+
       const result = await notesService.getAllNotesService({
         user: user,
         search: search,

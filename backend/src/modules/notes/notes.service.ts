@@ -43,12 +43,22 @@ class NotesService {
     });
   }
 
-  async getAllNotesService(
-    user: GetAllNotesDTO,
-  ): Promise<ServiceResponse<{ notes: INotes[] }>> {
-    const notes = await Note.find({
+  async getAllNotesService({
+    user,
+    search,
+  }: GetAllNotesDTO): Promise<ServiceResponse<{ notes: INotes[] }>> {
+    const filter: Record<string, unknown> = {
       user: user.userId,
-    });
+    };
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { content: { $regex: search, $options: "i" } },
+        { tags: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const notes = await Note.find(filter);
 
     return serviceResponse(200, true, "All notes fetched successfully", {
       notes,

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 import UserModel from "./auth.model.js";
 import { generateOtp } from "../../utils/generateOtp.js";

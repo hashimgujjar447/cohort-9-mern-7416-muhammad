@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import logger from "./logger.js";
-import dns from "node:dns/promises";
 
 async function connectDb(): Promise<void> {
   try {

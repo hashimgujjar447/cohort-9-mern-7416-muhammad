@@ -22,7 +22,10 @@ export type CreateServiceDTO = {
   user: IJwtPayload;
 };
 
-export type GetAllNotesDTO = IJwtPayload;
+export type GetAllNotesDTO = {
+  user: IJwtPayload;
+  search?: string;
+};
 
 export type GetSingleNoteDTO = {
   noteId: string;

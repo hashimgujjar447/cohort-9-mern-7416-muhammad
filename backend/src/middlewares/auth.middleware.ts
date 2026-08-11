@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import type { IJwtPayload } from "../modules/auth/auth.types.js";
+import logger from "../config/logger.js";
 
 export const AuthMiddleware = (
   req: Request,
@@ -27,6 +28,8 @@ export const AuthMiddleware = (
 
     next();
   } catch (error) {
+    logger.error({ error }, "Authentication middleware error");
+
     return res.status(401).json({
       success: false,
       message: "Invalid or expired token.",

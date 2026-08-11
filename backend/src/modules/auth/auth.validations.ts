@@ -29,17 +29,17 @@ export const registerSchema = z.object({
     .max(72, "Password cannot exceed 72 characters."),
 });
 export const loginSchema = z.object({
-  email: z.string().trim().toLowerCase().email("Invalid email address"),
+  email: z.email("Invalid email address.").trim().toLowerCase(),
   password: z.string().min(1, "Password is required"),
 });
 
 export const verifyEmailSchema = z.object({
-  email: z.string().trim().toLowerCase().email("Invalid email address"),
+  email: z.email("Invalid email address.").trim().toLowerCase(),
   otpCode: z.string().min(1, "OTP is required"),
 });
 
 export const resetPasswordRequestSchema = z.object({
-  email: z.string().trim().toLowerCase().email("Invalid email address"),
+  email: z.email("Invalid email address.").trim().toLowerCase(),
 });
 
 export const changePasswordSchema = z

@@ -40,7 +40,16 @@ class NotesController {
         return res
           .status(401)
           .json({ success: false, message: "Unauthorized" });
-      const result = await notesService.getAllNotesService(user);
+      const search =
+        typeof req.query.search === "string"
+          ? req.query.search.trim()
+          : undefined;
+
+
+      const result = await notesService.getAllNotesService({
+        user: user,
+        search: search,
+      });
       return res.status(result.status).json({
         success: result.success,
         message: result.message,

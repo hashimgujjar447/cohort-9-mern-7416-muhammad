@@ -40,7 +40,7 @@ describe("AuthService - register()", () => {
     expect(await user!.comparePassword(data.password)).to.be.true;
   });
 
-  it("should resend verification OTP for an existing unverified user", async () => {
+  it("should not resend verification OTP if existing OTP is still valid", async () => {
     await authService.register(data);
 
     const existingUser = await UserModel.findOne({ email: data.email });
@@ -53,20 +53,47 @@ describe("AuthService - register()", () => {
     expect(result.status).to.equal(200);
     expect(result.success).to.be.true;
     expect(result.message).to.equal(
-      "A new verification OTP has been sent to your email.",
+      "A email verification OTP is already send on your email please check",
     );
 
     const updatedUser = await UserModel.findOne({ email: data.email });
 
     expect(updatedUser).to.not.be.null;
-    expect(updatedUser!.emailVerificationToken).to.not.equal(oldOtp);
-    expect(
-      updatedUser!.emailVerificationTokenExpiry!.getTime(),
-    ).to.be.greaterThan(oldExpiry!.getTime());
+    expect(updatedUser!.emailVerificationToken).to.equal(oldOtp);
+    expect(updatedUser!.emailVerificationTokenExpiry!.getTime()).to.equal(
+      oldExpiry!.getTime(),
+    );
 
     const users = await UserModel.find();
 
     expect(users).to.have.length(1);
+  });
+  it("should resend verification OTP if existing OTP has expired", async () => {
+    await UserModel.create({
+      ...data,
+      isVerified: false,
+      emailVerificationToken: await bcrypt.hash("123456", 10),
+      emailVerificationTokenExpiry: new Date(Date.now() - 10 * 60 * 1000),
+    });
+
+    const existingUser = await UserModel.findOne({ email: data.email });
+
+    const oldOtp = existingUser!.emailVerificationToken;
+
+    const result = await authService.register(data);
+
+    expect(result.status).to.equal(200);
+    expect(result.success).to.be.true;
+    expect(result.message).to.equal(
+      "A new verification OTP has been sent to your email.",
+    );
+
+    const updatedUser = await UserModel.findOne({ email: data.email });
+
+    expect(updatedUser!.emailVerificationToken).to.not.equal(oldOtp);
+    expect(
+      updatedUser!.emailVerificationTokenExpiry!.getTime(),
+    ).to.be.greaterThan(Date.now());
   });
 
   it("should return 409 if username already exists", async () => {
@@ -173,9 +200,7 @@ describe("AuthService - login()", () => {
 
     expect(result.status).to.equal(401);
     expect(result.success).to.be.false;
-    expect(result.message).to.equal(
-      "Invalid credentials please register or enter correct credentials",
-    );
+    expect(result.message).to.equal("Invalid email or password.");
   });
 
   it("should return account not verified if user email is not verified", async () => {
@@ -211,7 +236,7 @@ describe("AuthService - login()", () => {
 
     expect(result.status).to.equal(401);
     expect(result.success).to.be.false;
-    expect(result.message).to.equal("Please enter a correct password");
+    expect(result.message).to.equal("Invalid email or password.");
 
     const user = await UserModel.findOne({ email: data.email });
 

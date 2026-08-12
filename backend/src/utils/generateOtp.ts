@@ -1,4 +1,4 @@
-import { randomInt } from "crypto";
+import { randomInt } from "node:crypto";
 import bcrypt from "bcryptjs";
 
 export const generateOtp = async (): Promise<{

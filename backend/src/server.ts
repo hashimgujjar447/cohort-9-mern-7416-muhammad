@@ -14,27 +14,23 @@ import connectDb from "./config/db.js";
 const port = Number(process.env.PORT);
 const PORT = Number.isInteger(port) && port > 0 && port < 65535 ? port : 5000;
 
-async function init(): Promise<void> {
-  try {
-    await connectDb();
+try {
+  await connectDb();
 
-    const server = app.listen(PORT, () => {
-      logger.info(`Server running on port ${PORT}`);
-    });
+  const server = app.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT}`);
+  });
 
-    server.on("error", (err: Error) => {
-      logger.error(err);
-      process.exit(1);
-    });
-  } catch (err) {
-    if (err instanceof Error) {
-      logger.error(err);
-    } else {
-      logger.error("Unknown startup error");
-    }
-
+  server.on("error", (err: Error) => {
+    logger.error(err);
     process.exit(1);
+  });
+} catch (err) {
+  if (err instanceof Error) {
+    logger.error(err);
+  } else {
+    logger.error("Unknown startup error");
   }
-}
 
-init();
+  process.exit(1);
+}

@@ -43,16 +43,32 @@ class NotesService {
     });
   }
 
-  async getAllNotesService(
-    user: GetAllNotesDTO,
-  ): Promise<ServiceResponse<{ notes: INotes[] }>> {
-    const notes = await Note.find({
-      user: user.userId,
-    });
+  async getAllNotesService({
+    user,
+    search,
+  }: GetAllNotesDTO): Promise<ServiceResponse<{ notes: INotes[] }>> {
+    try {
+      const filter: Record<string, unknown> = {
+        user: user.userId,
+      };
 
-    return serviceResponse(200, true, "All notes fetched successfully", {
-      notes,
-    });
+      if (search) {
+        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        filter.$or = [
+          { title: { $regex: escapedSearch, $options: "i" } },
+          { content: { $regex: escapedSearch, $options: "i" } },
+          { tags: { $regex: escapedSearch, $options: "i" } },
+        ];
+      }
+
+      const notes = await Note.find(filter);
+
+      return serviceResponse(200, true, "All notes fetched successfully", {
+        notes,
+      });
+    } catch {
+      return serviceResponse(500, false, "Failed to fetch notes");
+    }
   }
 
   async getSingleNoteService(

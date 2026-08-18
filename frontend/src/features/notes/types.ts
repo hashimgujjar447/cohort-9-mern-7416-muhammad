@@ -14,7 +14,7 @@ export interface INote {
 
   user: string | IUser;
 
-  createdAt: string;
+  createdAt?: string;
   updatedAt: string;
 }
 

@@ -4,14 +4,13 @@ import type { InputHTMLAttributes } from "react";
 export interface InputParams extends InputHTMLAttributes<HTMLInputElement> {
   type?: string;
   placeholder?: string;
-  style?: string;
+  inputStyle?: string;
   icon?: LucideIcon;
   value?: string | number;
 }
-
 const Input = ({
   type = "text",
-  style = "",
+  inputStyle = "",
   className = "",
   icon: Icon,
   placeholder,
@@ -38,7 +37,7 @@ const Input = ({
         onChange={onChange}
         className={`w-full rounded-full border border-gray-300 bg-white py-3 ${
           Icon ? "pl-13" : "pl-4"
-        } pr-4 outline-none focus:border-blue-500 ${style} ${className}`}
+        } pr-4 outline-none focus:border-blue-500 ${inputStyle} ${className}`}
       />
     </div>
   );

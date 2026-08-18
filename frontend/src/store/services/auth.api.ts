@@ -4,6 +4,7 @@ import type {
   GetProfileResponse,
   LoginDataType,
   LoginResponse,
+  LogoutResponse,
   RefreshAccessTokenResponse,
   RegisterDataType,
   RegisterResponse,
@@ -60,6 +61,13 @@ export const authApi = baseApi.injectEndpoints({
         credentials: "include",
       }),
     }),
+    logout: builder.mutation<LogoutResponse, void>({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+        credentials: "include",
+      }),
+    }),
 
     changePassword: builder.mutation<
       ChangePasswordResponse,
@@ -87,4 +95,5 @@ export const {
   useChangePasswordMutation,
   useRefreshAccessTokenMutation,
   useLazyGetProfileQuery,
+  useLogoutMutation,
 } = authApi;

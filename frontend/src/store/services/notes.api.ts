@@ -13,10 +13,11 @@ import type {
 
 export const notesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getNotes: builder.query<GetAllNotesResponse, void>({
-      query: () => ({
+    getNotes: builder.query<GetAllNotesResponse, { search?: string }>({
+      query: ({ search }) => ({
         url: "/note/all",
         method: "GET",
+        params: search ? { search } : undefined,
       }),
       providesTags: ["notes"],
     }),

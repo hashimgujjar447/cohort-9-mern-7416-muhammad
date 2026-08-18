@@ -1,7 +1,9 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAppSelector } from "../../store/hooks";
-import Header from "./Header";
 import { ClipLoader } from "react-spinners";
+
+import { useAppSelector } from "../../store/hooks";
+import { useGetProfileQuery } from "../../store/services/auth.api";
+import Header from "./Header";
 
 const AuthenticatedLayout = () => {
   const location = useLocation();
@@ -10,16 +12,21 @@ const AuthenticatedLayout = () => {
     (state) => state.auth,
   );
 
-  if (isLoading) {
+  const { isLoading: isProfileLoading, isError: isProfileError } =
+    useGetProfileQuery(undefined, {
+      skip: !accessToken || !isAuthenticated,
+    });
+
+  if (isLoading || isProfileLoading) {
     return (
       <div className="flex h-[70vh] flex-col items-center justify-center">
         <ClipLoader size={24} />
-
-        <p className="text-lg font-medium">Loading ...</p>
+        <p className="text-lg font-medium">Loading...</p>
       </div>
     );
   }
-  if (!isAuthenticated || !accessToken) {
+
+  if (!isAuthenticated || !accessToken || isProfileError) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 

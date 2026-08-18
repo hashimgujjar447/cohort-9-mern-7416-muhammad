@@ -1,47 +1,74 @@
-import React, { useState } from "react";
-import Input from "../ui/Input";
+import React, { useEffect, useState } from "react";
 import { Plus, Search, UserRound } from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+
+import Input from "../ui/Input";
 import Button from "../ui/Button";
-import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const [search, setSearch] = useState<string>("");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [search, setSearch] = useState<string>(
+    searchParams.get("search") || "",
+  );
+  const [debouncedSearch, setDebouncedSearch] = useState<string>(
+    searchParams.get("search") || "",
+  );
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      setSearchParams({ search: debouncedSearch }, { replace: true });
+    } else {
+      setSearchParams({}, { replace: true });
+    }
+  }, [debouncedSearch, setSearchParams]);
+
   return (
-    <header className="flex justify-between items-center">
-      <div
-        onClick={() => {
-          navigate("/");
-        }}
+    <header className="flex items-center justify-between">
+      <button
+        type="button"
+        onClick={() => navigate("/")}
+        aria-label="Go to home"
       >
-        <img src="/logo.png" alt="Website logo" className="w-20 " />
-      </div>
+        <img src="/logo.png" alt="Website logo" className="w-20" />
+      </button>
+
       <div className="w-100">
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           type="text"
           placeholder="Search"
-          style="h-11 "
+          style="h-11"
           icon={Search}
         />
       </div>
+
       <div className="flex items-center gap-x-2">
         <div title="Create Note">
           <Button
-            onClick={() => {
-              navigate("/notes/create");
-            }}
-            className="bg-secondary-text text-white rounded-full hover:cursor-pointer"
+            onClick={() => navigate("/notes/create")}
+            className="cursor-pointer rounded-full bg-secondary-text text-white"
             Icon={Plus}
           >
             Create
           </Button>
         </div>
+
         <Link
-          to={"/profile"}
+          to="/profile"
           title="Open Profile"
-          className="flex items-center w-10 h-10 rounded-full hover:cursor-pointer bg-bg-light justify-center"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-bg-light"
         >
           <UserRound />
         </Link>

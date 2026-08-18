@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
@@ -44,7 +45,11 @@ describe("EditorToggleButton", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Bold" }));
+    try {
+      await user.click(screen.getByRole("button", { name: "Bold" }));
+    } catch (err) {
+      throw new Error(`[EditorToggleButton – onClick click]: ${err}`);
+    }
 
     expect(onClick).toHaveBeenCalledTimes(1);
   });
@@ -60,7 +65,11 @@ describe("EditorToggleButton", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Bold" }));
+    try {
+      await user.click(screen.getByRole("button", { name: "Bold" }));
+    } catch (err) {
+      throw new Error(`[EditorToggleButton – disabled click]: ${err}`);
+    }
     expect(onClick).not.toHaveBeenCalled();
   });
   it("should apply active styles when isActive is true", () => {

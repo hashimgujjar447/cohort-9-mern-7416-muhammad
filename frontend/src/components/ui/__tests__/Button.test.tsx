@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import Button from "../Button";
 import userEvent from "@testing-library/user-event";
@@ -15,7 +16,11 @@ describe("Button", () => {
 
     render(<Button handleClick={handleClick}>Login</Button>);
 
-    await user.click(screen.getByRole("button", { name: "Login" }));
+    try {
+      await user.click(screen.getByRole("button", { name: "Login" }));
+    } catch (err) {
+      throw new Error(`[Button – handleClick click]: ${err}`);
+    }
 
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -33,7 +38,11 @@ describe("Button", () => {
       </Button>,
     );
 
-    await user.click(screen.getByRole("button", { name: "login" }));
+    try {
+      await user.click(screen.getByRole("button", { name: "login" }));
+    } catch (err) {
+      throw new Error(`[Button – disabled click]: ${err}`);
+    }
 
     expect(handleClick).not.toHaveBeenCalled();
   });

@@ -139,7 +139,7 @@ const NoteEditPage = () => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Enter title"
-          style="rounded-md"
+          inputStyle="rounded-md"
         />
       </div>
 

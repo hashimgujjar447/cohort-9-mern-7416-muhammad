@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Search } from "lucide-react";
@@ -17,7 +18,11 @@ describe("Input", () => {
 
     const input = screen.getByPlaceholderText("Enter your name");
 
-    await user.type(input, "Muhammad");
+    try {
+      await user.type(input, "Muhammad");
+    } catch (err) {
+      throw new Error(`[Input – accept user input type]: ${err}`);
+    }
 
     expect(input).toHaveValue("Muhammad");
   });
@@ -28,7 +33,14 @@ describe("Input", () => {
 
     render(<Input placeholder="Enter your name" onChange={onChange} />);
 
-    await user.type(screen.getByPlaceholderText("Enter your name"), "Muhammad");
+    try {
+      await user.type(
+        screen.getByPlaceholderText("Enter your name"),
+        "Muhammad",
+      );
+    } catch (err) {
+      throw new Error(`[Input – onChange type]: ${err}`);
+    }
 
     expect(onChange).toHaveBeenCalled();
   });

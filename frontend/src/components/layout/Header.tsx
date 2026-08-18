@@ -18,6 +18,12 @@ const Header = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const urlSearch = searchParams.get("search") || "";
+    setSearch(urlSearch);
+    setDebouncedSearch(urlSearch);
+  }, [searchParams]);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search.trim());
     }, 500);
@@ -26,11 +32,18 @@ const Header = () => {
   }, [search]);
 
   useEffect(() => {
-    if (debouncedSearch) {
-      setSearchParams({ search: debouncedSearch }, { replace: true });
-    } else {
-      setSearchParams({}, { replace: true });
-    }
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (debouncedSearch) {
+          next.set("search", debouncedSearch);
+        } else {
+          next.delete("search");
+        }
+        return next;
+      },
+      { replace: true },
+    );
   }, [debouncedSearch, setSearchParams]);
 
   return (
@@ -49,7 +62,7 @@ const Header = () => {
           onChange={(e) => setSearch(e.target.value)}
           type="text"
           placeholder="Search"
-          style="h-11"
+          inputStyle="h-11"
           icon={Search}
         />
       </div>

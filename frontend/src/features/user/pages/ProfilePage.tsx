@@ -1,5 +1,4 @@
 import { BadgeCheck, CalendarDays, FileText, LogOut, Mail } from "lucide-react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 
@@ -10,10 +9,11 @@ import {
   useGetProfileQuery,
 } from "../../../store/services/auth.api";
 import { useGetNotesQuery } from "../../../store/services/notes.api";
+import { useAppDispatch } from "../../../store/hooks";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const {
     data: profileData,

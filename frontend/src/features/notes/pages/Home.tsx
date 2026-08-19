@@ -1,9 +1,17 @@
-import { useGetNotesQuery } from "../../../store/services/notes.api";
-import NoteCard from "../components/NoteCard";
+import { useSearchParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 
+import { useGetNotesQuery } from "../../../store/services/notes.api";
+import NoteCard from "../components/NoteCard";
+
 const Home = () => {
-  const { data, isLoading, isError } = useGetNotesQuery();
+  const [searchParams] = useSearchParams();
+
+  const search = searchParams.get("search") || undefined;
+
+  const { data, isLoading, isError } = useGetNotesQuery({
+    search,
+  });
 
   if (isLoading) {
     return (
@@ -25,11 +33,13 @@ const Home = () => {
     );
   }
 
-  if (data && !data?.data?.length) {
+  if (!data?.data?.length) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
         <p className="text-lg text-gray-500">
-          No notes available. Create your first note.
+          {search
+            ? `No notes found for "${search}".`
+            : "No notes available. Create your first note."}
         </p>
       </div>
     );
@@ -37,7 +47,7 @@ const Home = () => {
 
   return (
     <div className="mt-10 flex flex-wrap justify-between gap-y-10">
-      {data?.data?.map((note) => (
+      {data.data.map((note) => (
         <NoteCard key={note._id} note={note} />
       ))}
     </div>

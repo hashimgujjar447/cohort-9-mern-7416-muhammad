@@ -3,6 +3,7 @@ import { ClipLoader } from "react-spinners";
 
 import { useGetNotesQuery } from "../../../store/services/notes.api";
 import NoteCard from "../components/NoteCard";
+import ChatWidget from "../../../components/chat/ChatWidget";
 
 const Home = () => {
   const [searchParams] = useSearchParams();
@@ -41,6 +42,7 @@ const Home = () => {
             ? `No notes found for "${search}".`
             : "No notes available. Create your first note."}
         </p>
+        <ChatWidget />
       </div>
     );
   }
@@ -50,6 +52,7 @@ const Home = () => {
       {data.data.map((note) => (
         <NoteCard key={note._id} note={note} />
       ))}
+      <ChatWidget />
     </div>
   );
 };

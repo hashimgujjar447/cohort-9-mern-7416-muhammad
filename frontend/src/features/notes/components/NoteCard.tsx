@@ -29,7 +29,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
         />
       </div>
 
-      <div className="mt-auto flex items-center justify-between">
+      <div className="mt-3 flex items-center justify-between">
         <span className="text-sm text-text-blue">
           {formattedDate.toLocaleString("en-US", {
             day: "numeric",

@@ -15,7 +15,7 @@ class ChatService {
           content: 1,
         },
       )
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1, _id: -1 })
         .limit(20)
         .lean();
 
@@ -52,7 +52,7 @@ class ChatService {
           createdAt: 1,
         },
       )
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1, _id: -1 })
         .limit(20)
         .lean();
 
@@ -87,7 +87,7 @@ class ChatService {
           createdAt: 1,
         },
       )
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1, _id: -1 })
         .limit(20)
         .lean();
 

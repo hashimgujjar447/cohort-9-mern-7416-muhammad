@@ -22,19 +22,38 @@ type ChatAIData = {
   history: ChatMessageHistory[];
 };
 
+type ChatAIResponse = {
+  response: string;
+};
+
+const AI_TIMEOUT_MS = 30_000;
+
 const callAIService = async (endpoint: string, options: RequestInit) => {
-  const response = await fetch(
-    `${process.env.AI_SERVICE_URL}${endpoint}`,
-    options,
-  );
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
 
-  if (!response.ok) {
-    const errorMessage = await response.text();
+  try {
+    const response = await fetch(`${process.env.AI_SERVICE_URL}${endpoint}`, {
+      ...options,
+      signal: controller.signal,
+    });
 
-    throw new Error(`AI service failed: ${response.status} - ${errorMessage}`);
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(
+        `AI service failed: ${response.status} - ${errorMessage}`,
+      );
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error("AI service request timed out");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  return response.json();
 };
 
 export const ingestNoteToAI = async (data: NoteAIData) => {
@@ -67,12 +86,18 @@ export const deleteIngestNoteEmbeddings = async (data: DeleteNoteAIData) => {
   });
 };
 
-export const chatWithAI = async (data: ChatAIData) => {
-  return callAIService("/api/v1/chat", {
+export const chatWithAI = async (data: ChatAIData): Promise<ChatAIResponse> => {
+  const result = await callAIService("/api/v1/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   });
+
+  if (!result || typeof result.response !== "string") {
+    throw new Error("AI service returned an unexpected response shape");
+  }
+
+  return result as ChatAIResponse;
 };

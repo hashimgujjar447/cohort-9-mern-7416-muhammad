@@ -13,7 +13,6 @@ const chatMessageSchema = new Schema<IChatMessage>(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,
     },
 
     role: {
@@ -32,6 +31,8 @@ const chatMessageSchema = new Schema<IChatMessage>(
     timestamps: true,
   },
 );
+
+chatMessageSchema.index({ user: 1, createdAt: -1, _id: -1 });
 
 export const ChatMessage = model<IChatMessage>(
   "ChatMessage",

@@ -14,21 +14,26 @@ export const aiWorker = new Worker(
   async (job) => {
     console.log(`Processing AI job: ${job.id} - ${job.name}`);
 
-    switch (job.name) {
-      case "ingest-note":
-        await ingestNoteToAI(job.data);
-        break;
+    try {
+      switch (job.name) {
+        case "ingest-note":
+          await ingestNoteToAI(job.data);
+          break;
 
-      case "update-note":
-        await updateIngestNoteToAI(job.data);
-        break;
+        case "update-note":
+          await updateIngestNoteToAI(job.data);
+          break;
 
-      case "delete-note":
-        await deleteIngestNoteEmbeddings(job.data);
-        break;
+        case "delete-note":
+          await deleteIngestNoteEmbeddings(job.data);
+          break;
 
-      default:
-        throw new Error(`Unknown AI job: ${job.name}`);
+        default:
+          throw new Error(`Unknown AI job: ${job.name}`);
+      }
+    } catch (error) {
+      console.error(`AI job ${job.id} - ${job.name} failed:`, error);
+      throw error;
     }
 
     console.log(`AI job completed: ${job.id} - ${job.name}`);

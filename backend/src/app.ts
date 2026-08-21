@@ -5,6 +5,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import AuthRouter from "./modules/auth/auth.routes.js";
 import NoteRouter from "./modules/notes/notes.routes.js";
+import chatRouter from "./modules/chat/chat.routes.js";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler.js";
 import cors from "cors";
 
@@ -37,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1/auth", AuthRouter);
 app.use("/api/v1/note", NoteRouter);
+app.use("/api/v1/chat", chatRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Api is working" });

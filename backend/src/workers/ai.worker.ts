@@ -1,4 +1,4 @@
-import { Worker } from "bullmq";
+import { Worker, UnrecoverableError } from "bullmq";
 
 import { redisConnection } from "../config/redis.js";
 
@@ -29,7 +29,7 @@ export const aiWorker = new Worker(
           break;
 
         default:
-          throw new Error(`Unknown AI job: ${job.name}`);
+          throw new UnrecoverableError(`Unknown AI job: ${job.name}`);
       }
     } catch (error) {
       console.error(`AI job ${job.id} - ${job.name} failed:`, error);

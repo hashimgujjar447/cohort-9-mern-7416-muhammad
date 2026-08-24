@@ -13,7 +13,7 @@ export const aiQueue = new Queue("ai-ingestion", {
       delay: 10000,
     },
 
-    removeOnComplete: 100,
-    removeOnFail: 500,
+    removeOnComplete: { count: 100, age: 3600 },
+    removeOnFail: { count: 500, age: 86400 },
   },
 });

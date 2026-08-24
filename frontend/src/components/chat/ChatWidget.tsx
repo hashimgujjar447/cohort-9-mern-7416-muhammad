@@ -64,6 +64,10 @@ const ChatWidget = () => {
       }
     } catch (error) {
       console.error("Chat error:", error);
+      setMessages((previous) =>
+        previous.filter((msg) => msg !== userMessage),
+      );
+      setMessage(trimmedMessage);
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, Search, UserRound } from "lucide-react";
 import {
   Link,
@@ -59,16 +59,16 @@ const Header = () => {
   const showCreateButton = location.pathname === "/";
 
   return (
-    <header className="flex items-center justify-between">
+    <header className="flex flex-wrap items-center justify-between gap-3 sm:flex-nowrap">
       <button
         type="button"
         onClick={() => navigate("/")}
         aria-label="Go to home"
       >
-        <img src="/logo.png" alt="Website logo" className="w-20" />
+        <img src="/logo.png" alt="Website logo" className="w-16 sm:w-20" />
       </button>
 
-      <div className="w-100">
+      <div className="order-3 w-full sm:order-2 sm:w-72 md:w-96 lg:w-[420px]">
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -79,7 +79,7 @@ const Header = () => {
         />
       </div>
 
-      <div className="flex items-center gap-x-2">
+      <div className="order-2 flex items-center gap-x-2 sm:order-3">
         {showCreateButton && (
           <div title="Create Note">
             <Button

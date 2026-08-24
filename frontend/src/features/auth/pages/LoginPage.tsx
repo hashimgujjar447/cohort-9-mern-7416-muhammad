@@ -59,17 +59,17 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex h-screen justify-around px-20 py-20">
-      <div className="mt-10 w-100">
-        <img src="/regLogIcon.png" alt="" />
+    <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-4 py-8 sm:px-10 lg:flex-row lg:justify-around lg:px-20 lg:py-20">
+      <div className="hidden w-64 md:block md:w-80 lg:w-96">
+        <img src="/regLogIcon.png" alt="" className="w-full object-contain" />
       </div>
 
-      <div className="flex flex-col justify-center">
-        <h1 className="mb-2 text-center text-3xl font-extrabold text-primary-text">
+      <div className="flex w-full max-w-md flex-col justify-center">
+        <h1 className="mb-2 text-center text-2xl font-extrabold text-primary-text sm:text-3xl">
           Securely Save Your Important Data
         </h1>
 
-        <p className="text-center text-lg text-secondary-text">
+        <p className="text-center text-base text-secondary-text sm:text-lg">
           Log in to continue
         </p>
 

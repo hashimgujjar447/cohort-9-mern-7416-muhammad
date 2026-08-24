@@ -30,7 +30,7 @@ const AuthenticatedLayout = () => {
   }
 
   return (
-    <div className="px-15 py-3">
+    <div className="px-4 py-3 sm:px-8 md:px-12 lg:px-15">
       <Header />
       <Outlet />
     </div>

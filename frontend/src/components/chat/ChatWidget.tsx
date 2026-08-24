@@ -64,9 +64,7 @@ const ChatWidget = () => {
       }
     } catch (error) {
       console.error("Chat error:", error);
-      setMessages((previous) =>
-        previous.filter((msg) => msg !== userMessage),
-      );
+      setMessages((previous) => previous.filter((msg) => msg !== userMessage));
       setMessage(trimmedMessage);
     }
   };
@@ -81,7 +79,7 @@ const ChatWidget = () => {
   return (
     <>
       {isOpen && (
-        <div className="fixed bottom-18 bg-amber-50 right-15 z-50 flex h-[520px] w-[400px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border bg-background shadow-2xl">
+        <div className="fixed bottom-18 right-4 z-50 flex h-[400px] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border bg-amber-50 shadow-2xl sm:bottom-20 sm:right-6 sm:h-[520px] sm:w-[400px]">
           {/* Header */}
           <div className="flex items-center justify-between border-b bg-background px-4 py-3">
             <div className="flex items-center gap-3">
@@ -226,7 +224,7 @@ const ChatWidget = () => {
       <button
         type="button"
         onClick={() => setIsOpen((previous) => !previous)}
-        className="fixed bottom-5 bg-amber-50 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-xl text-primary-foreground shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl"
+        className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-primary bg-amber-50 text-xl text-primary-foreground shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl sm:bottom-5 sm:right-5 sm:h-14 sm:w-14"
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         {isOpen ? "✕" : "💬"}

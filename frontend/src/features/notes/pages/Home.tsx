@@ -48,7 +48,7 @@ const Home = () => {
   }
 
   return (
-    <div className="mt-10 flex flex-wrap justify-between gap-y-10">
+    <div className="mt-6 grid grid-cols-1 gap-6 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {data.data.map((note) => (
         <NoteCard key={note._id} note={note} />
       ))}

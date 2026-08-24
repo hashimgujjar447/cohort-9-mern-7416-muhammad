@@ -12,6 +12,7 @@ import {
   type ServiceResponse,
 } from "../../utils/apiResponse.js";
 
+import { aiQueue } from "../../queues/ai.queue.js";
 class NotesService {
   async createNoteService(
     data: CreateServiceDTO,
@@ -37,6 +38,15 @@ class NotesService {
       tags,
       color,
       user: user.userId,
+    });
+
+    await aiQueue.add("ingest-note", {
+      noteId: note._id.toString(),
+      userId: note.user.toString(),
+      title: note.title,
+      content: note.content,
+      createdAt: note.createdAt.toISOString(),
+      updatedAt: note.updatedAt.toISOString(),
     });
     return serviceResponse(201, true, "Note created successfully", {
       note,
@@ -138,6 +148,17 @@ class NotesService {
 
     await note.save();
 
+    const dataForUpdateEmbeddings = {
+      noteId: note._id.toString(),
+      userId: user.userId,
+      title: note.title,
+      content: note.content,
+      createdAt: note.createdAt.toISOString(),
+      updatedAt: note.updatedAt.toISOString(),
+    };
+
+    await aiQueue.add("update-note", dataForUpdateEmbeddings);
+
     return serviceResponse(200, true, "Note updated successfully", {
       note,
     });
@@ -152,6 +173,11 @@ class NotesService {
     if (!deletedNote) {
       return serviceResponse(404, false, "No note found with this id");
     }
+
+    await aiQueue.add("delete-note", {
+      userId: data.user.userId,
+      noteId: data.noteId,
+    });
 
     return serviceResponse(200, true, "Note deleted successfully");
   }

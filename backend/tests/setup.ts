@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { aiQueue } from "../src/queues/ai.queue.js";
 
 let mongoServer: MongoMemoryServer;
 
@@ -24,7 +25,9 @@ afterEach(async () => {
 after(async (): Promise<void> => {
   try {
     await mongoose.disconnect();
+    await aiQueue.close();
   } finally {
     await mongoServer.stop();
   }
 });
+

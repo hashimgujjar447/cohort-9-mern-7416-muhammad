@@ -9,6 +9,8 @@
     "lint": "eslint .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "sonar": "npx sonarqube-scanner -D sonar.token=sqp_056fb302b17590a38a732ef9d38cdd9d2933a3bd",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -51,6 +53,7 @@
     "globals": "^17.7.0",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
+    "sonarqube-scanner": "^5.0.0",
     "ts-jest": "^29.4.12",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.62.0",

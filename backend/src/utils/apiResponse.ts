@@ -23,5 +23,5 @@ export const serviceResponse = <
     status,
     success,
     message,
-    ...(data ?? {}),
+    ...data,
   }) as ServiceResponse<T>;

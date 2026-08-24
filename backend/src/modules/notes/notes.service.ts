@@ -63,7 +63,7 @@ class NotesService {
       };
 
       if (search) {
-        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
         filter.$or = [
           { title: { $regex: escapedSearch, $options: "i" } },
           { content: { $regex: escapedSearch, $options: "i" } },

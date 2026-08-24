@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Search, UserRound } from "lucide-react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 
 const Header = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
 
   const [search, setSearch] = useState<string>(
     searchParams.get("search") || "",
   );
+
   const [debouncedSearch, setDebouncedSearch] = useState<string>(
     searchParams.get("search") || "",
   );
@@ -19,6 +26,7 @@ const Header = () => {
 
   useEffect(() => {
     const urlSearch = searchParams.get("search") || "";
+
     setSearch(urlSearch);
     setDebouncedSearch(urlSearch);
   }, [searchParams]);
@@ -35,16 +43,20 @@ const Header = () => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
+
         if (debouncedSearch) {
           next.set("search", debouncedSearch);
         } else {
           next.delete("search");
         }
+
         return next;
       },
       { replace: true },
     );
   }, [debouncedSearch, setSearchParams]);
+
+  const showCreateButton = location.pathname === "/";
 
   return (
     <header className="flex items-center justify-between">
@@ -68,15 +80,17 @@ const Header = () => {
       </div>
 
       <div className="flex items-center gap-x-2">
-        <div title="Create Note">
-          <Button
-            onClick={() => navigate("/notes/create")}
-            className="cursor-pointer rounded-full bg-secondary-text text-white"
-            Icon={Plus}
-          >
-            Create
-          </Button>
-        </div>
+        {showCreateButton && (
+          <div title="Create Note">
+            <Button
+              onClick={() => navigate("/notes/create")}
+              className="cursor-pointer rounded-full bg-secondary-text text-white"
+              Icon={Plus}
+            >
+              Create
+            </Button>
+          </div>
+        )}
 
         <Link
           to="/profile"

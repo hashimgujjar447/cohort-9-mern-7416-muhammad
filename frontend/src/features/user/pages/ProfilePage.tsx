@@ -10,6 +10,7 @@ import {
 } from "../../../store/services/auth.api";
 import { useGetNotesQuery } from "../../../store/services/notes.api";
 import { useAppDispatch } from "../../../store/hooks";
+import { baseApi } from "../../../store/services/base.api";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -63,18 +64,19 @@ const ProfilePage = () => {
         day: "numeric",
       })
     : "N/A";
-
   const handleLogout = async () => {
     try {
       await logoutUser().unwrap();
 
+      dispatch(baseApi.util.resetApiState());
+
       dispatch(logout());
+
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
-
   return (
     <div className="flex min-h-[75vh] items-center justify-center px-4 py-10">
       <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">

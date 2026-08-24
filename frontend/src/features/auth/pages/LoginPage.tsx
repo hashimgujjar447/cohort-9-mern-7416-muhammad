@@ -9,15 +9,18 @@ import { loginSchema } from "../auth.validation";
 import toast from "react-hot-toast";
 import { useAppDispatch } from "../../../store/hooks";
 import { login as loginSuccess } from "../../../store/feature/auth.slice";
+import { baseApi } from "../../../store/services/base.api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [login, { isLoading }] = useLoginMutation();
+
   const [formData, setFormData] = useState<LoginDataType>({
     email: "",
     password: "",
   });
+
   const handleLoginForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -29,63 +32,78 @@ const LoginPage = () => {
 
     try {
       const res = await login(parsedData.data).unwrap();
+
       if (res.success) {
         if (!res.data?.accessToken) {
           toast.error("Login response is missing required data.");
           return;
         }
+
         dispatch(
           loginSuccess({
             accessToken: res.data.accessToken,
             user: null,
           }),
         );
+
+        dispatch(baseApi.util.resetApiState());
+
+        toast.success(res.message);
+        navigate("/");
       }
-
-      toast.success(res.message);
-
-      navigate("/");
     } catch (error: any) {
       toast.error(
         error?.data?.message ?? error?.message ?? "Something went wrong.",
       );
     }
   };
+
   return (
-    <div className="flex h-screen px-20 py-20 justify-around ">
-      <div className="w-100 mt-10">
+    <div className="flex h-screen justify-around px-20 py-20">
+      <div className="mt-10 w-100">
         <img src="/regLogIcon.png" alt="" />
       </div>
-      <div className="flex justify-center flex-col">
-        <h1 className="text-primary-text mb-2 text-3xl text-center font-extrabold">
+
+      <div className="flex flex-col justify-center">
+        <h1 className="mb-2 text-center text-3xl font-extrabold text-primary-text">
           Securely Save Your Important Data
         </h1>
-        <p className="text-center text-secondary-text text-lg">
+
+        <p className="text-center text-lg text-secondary-text">
           Log in to continue
         </p>
-        <form className="flex flex-col mt-4 gap-4" onSubmit={handleLoginForm}>
+
+        <form className="mt-4 flex flex-col gap-4" onSubmit={handleLoginForm}>
           <Input
             value={formData.email}
             onChange={(e) =>
-              setFormData((prev) => ({ ...prev, email: e.target.value }))
+              setFormData((prev) => ({
+                ...prev,
+                email: e.target.value,
+              }))
             }
             type="email"
             placeholder="Email"
             icon={Mail}
           />
+
           <Input
             value={formData.password}
             onChange={(e) =>
-              setFormData((prev) => ({ ...prev, password: e.target.value }))
+              setFormData((prev) => ({
+                ...prev,
+                password: e.target.value,
+              }))
             }
             type="password"
             placeholder="Password"
             icon={Lock}
           />
-          <div className=" text-sm text-right ">
-            Forget your password ?{" "}
+
+          <div className="text-right text-sm">
+            Forget your password?{" "}
             <Link
-              to={"/forgot-password"}
+              to="/forgot-password"
               className="text-text-blue hover:underline"
             >
               Click to reset
@@ -95,16 +113,16 @@ const LoginPage = () => {
           <div className="flex items-center justify-center">
             <Button
               type="submit"
-              className="bg-secondary-text text-white rounded-full px-6"
+              className="rounded-full bg-secondary-text px-6 text-white"
             >
               {isLoading ? "Logging In ..." : "Log In"}
             </Button>
           </div>
         </form>
 
-        <div className="my-2 text-sm text-center font-medium">
-          Don't have an account ?{" "}
-          <Link to={"/register"} className="text-text-blue hover:underline">
+        <div className="my-2 text-center text-sm font-medium">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-text-blue hover:underline">
             Register
           </Link>
         </div>

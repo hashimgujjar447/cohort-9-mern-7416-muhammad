@@ -12,10 +12,9 @@ const AuthenticatedLayout = () => {
     (state) => state.auth,
   );
 
-  const { isLoading: isProfileLoading, isError: isProfileError } =
-    useGetProfileQuery(undefined, {
-      skip: !accessToken || !isAuthenticated,
-    });
+  const { isLoading: isProfileLoading } = useGetProfileQuery(undefined, {
+    skip: !accessToken || !isAuthenticated,
+  });
 
   if (isLoading || isProfileLoading) {
     return (
@@ -26,7 +25,7 @@ const AuthenticatedLayout = () => {
     );
   }
 
-  if (!isAuthenticated || !accessToken || isProfileError) {
+  if (!isAuthenticated || !accessToken) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 

@@ -123,7 +123,7 @@ const NoteEditPage = () => {
   }
 
   return (
-    <div className="mx-auto mt-6 max-w-5xl rounded-3xl bg-white p-8 shadow-lg">
+    <div className="mx-auto mt-4 max-w-5xl rounded-2xl bg-white p-4 shadow-lg sm:mt-6 sm:rounded-3xl sm:p-8">
       <button
         onClick={() => navigate(-1)}
         className="mb-6 flex items-center gap-2 text-lg transition hover:text-text-blue"
@@ -155,7 +155,7 @@ const NoteEditPage = () => {
       <div className="mb-8">
         <h2 className="mb-4 text-2xl font-bold">Tags</h2>
 
-        <div className="mb-6 flex items-end gap-4">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
           <div className="flex-1">
             <Input
               value={tag}
@@ -173,7 +173,7 @@ const NoteEditPage = () => {
 
           <Button
             handleClick={handleAddTag}
-            className="rounded-xl bg-text-blue px-6 text-white"
+            className="w-full rounded-xl bg-text-blue px-6 py-2.5 text-white sm:w-auto"
           >
             Add
           </Button>
@@ -199,7 +199,7 @@ const NoteEditPage = () => {
         </div>
       </div>
 
-      <div className="mb-8 flex flex-wrap gap-4">
+      {/* <div className="mb-8 flex flex-wrap gap-4">
         <Button
           handleClick={() => setIsPinned((prev) => !prev)}
           className={`rounded-xl px-5 ${
@@ -221,7 +221,7 @@ const NoteEditPage = () => {
         >
           {isArchived ? "Archived" : "Archive Note"}
         </Button>
-      </div>
+      </div> */}
 
       <Button
         handleClick={handleUpdate}

@@ -76,7 +76,7 @@ const NoteDetailPage = () => {
   };
 
   return (
-    <div className="mx-auto mt-10 max-w-5xl rounded-3xl bg-white p-10 shadow-lg">
+    <div className="mx-auto mt-6 max-w-5xl rounded-2xl bg-white p-4 shadow-lg sm:mt-10 sm:rounded-3xl sm:p-8 md:p-10">
       {/* Header */}
       <div className="flex items-center justify-between">
         <button
@@ -87,10 +87,10 @@ const NoteDetailPage = () => {
           Back
         </button>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             to={`/notes/${note._id}/edit`}
-            className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600"
+            className="flex items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 text-sm text-white transition hover:bg-blue-600 sm:gap-2 sm:px-4 sm:py-2 sm:text-base"
           >
             <Edit size={18} />
             Edit
@@ -99,7 +99,7 @@ const NoteDetailPage = () => {
           <button
             onClick={handleDeleteNote}
             disabled={isDeleteNoteLoading}
-            className="flex cursor-pointer items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-red-500 px-3 py-1.5 text-sm text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60 sm:gap-2 sm:px-4 sm:py-2 sm:text-base"
           >
             <Trash2 size={18} />
             {isDeleteNoteLoading ? "Deleting..." : "Delete"}
@@ -107,7 +107,7 @@ const NoteDetailPage = () => {
         </div>
       </div>
 
-      <h1 className="mt-8 text-4xl font-bold text-secondary-text">
+      <h1 className="mt-6 text-2xl font-bold text-secondary-text sm:mt-8 sm:text-3xl md:text-4xl">
         {note.title}
       </h1>
 
@@ -143,7 +143,7 @@ const NoteDetailPage = () => {
       </div>
 
       {note.tags.length > 0 && (
-        <div className="mt-8 flex flex-wrap gap-2">
+        <div className="mt-6 flex flex-wrap gap-2 sm:mt-8">
           {note.tags.map((tag: string) => (
             <span
               key={tag}
@@ -156,7 +156,7 @@ const NoteDetailPage = () => {
         </div>
       )}
 
-      <div className="mt-8 rounded-2xl bg-gray-50 p-6">
+      <div className="mt-6 rounded-xl bg-gray-50 p-4 sm:mt-8 sm:rounded-2xl sm:p-6">
         <div
           className="
     leading-8 text-gray-700

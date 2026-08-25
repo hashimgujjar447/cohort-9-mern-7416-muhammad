@@ -80,12 +80,12 @@ const ProfilePage = () => {
   return (
     <div className="flex min-h-[75vh] items-center justify-center px-4 py-10">
       <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="flex flex-col items-center bg-bg-light px-6 py-10">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-secondary-text text-3xl font-bold text-white">
+        <div className="flex flex-col items-center bg-bg-light px-4 py-8 sm:px-6 sm:py-10">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary-text text-2xl font-bold text-white sm:h-24 sm:w-24 sm:text-3xl">
             {initials}
           </div>
 
-          <h1 className="mt-4 text-2xl font-bold text-gray-900">
+          <h1 className="mt-4 text-center text-xl font-bold text-gray-900 sm:text-2xl">
             {user.firstName} {user.lastName}
           </h1>
 
@@ -99,7 +99,7 @@ const ProfilePage = () => {
           )}
         </div>
 
-        <div className="space-y-5 p-6">
+        <div className="space-y-4 p-4 sm:space-y-5 sm:p-6">
           <div className="flex items-center gap-4 rounded-xl border border-gray-100 p-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-bg-light">
               <Mail size={20} />

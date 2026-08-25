@@ -17,9 +17,9 @@ const NoteCard = ({ note }: NoteCardProps) => {
   return (
     <Link
       to={`/notes/${note._id}`}
-      className="w-90 h-50 rounded-4xl bg-white px-8 py-6 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col"
+      className="flex min-h-[200px] w-full flex-col rounded-3xl bg-white px-6 py-5 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:rounded-4xl sm:px-8 sm:py-6"
     >
-      <h2 className="text-2xl font-bold text-secondary-text">{note.title}</h2>
+      <h2 className="text-xl font-bold text-secondary-text sm:text-2xl">{note.title}</h2>
       <div className="mt-4 flex-1">
         <div
           className="line-clamp-4 text-sm text-gray-700"

@@ -9,7 +9,7 @@
     "start": "node dist/server.js",
     "test": "mocha --require tsx/esm --file tests/setup.ts \"tests/**/*.test.ts\" --timeout 10000 --exit",
     "test:coverage": "c8 --all --src=src --reporter=text --reporter=html --reporter=lcov mocha --require tsx/esm --file tests/setup.ts \"tests/**/*.test.ts\" --timeout 10000 --exit",
-    "sonar": "npx sonarqube-scanner -D sonar.token=sqp_c6e438830b18ca07b4540589e98ae5569f543104"
+    "sonar": "npx sonarqube-scanner -D sonar.token=your_token"
   },
   "keywords": [],
   "author": "",

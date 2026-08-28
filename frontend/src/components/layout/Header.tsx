@@ -108,10 +108,23 @@ const Header = () => {
         const parsed = JSON.parse(content);
         const notesToImport = Array.isArray(parsed) ? parsed : [parsed];
 
-        const validNotes = notesToImport.filter(
-          (n) =>
-            n && typeof n.title === "string" && typeof n.content === "string",
-        );
+        const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+        const validNotes = notesToImport.filter((n: any) => {
+          if (!n || typeof n !== "object") return false;
+          if (
+            typeof n.title !== "string" ||
+            !n.title.trim() ||
+            n.title.trim().length > 100
+          )
+            return false;
+          if (
+            typeof n.content !== "string" ||
+            !n.content.trim() ||
+            n.content.trim().length > 10000
+          )
+            return false;
+          return true;
+        });
 
         if (validNotes.length === 0) {
           toast.error("Invalid or empty notes JSON file");
@@ -120,12 +133,29 @@ const Header = () => {
 
         let successCount = 0;
         for (const n of validNotes) {
+          const cleanedTags = Array.isArray(n.tags)
+            ? n.tags
+                .filter(
+                  (t: any) =>
+                    typeof t === "string" &&
+                    t.trim().length > 0 &&
+                    t.trim().length <= 30,
+                )
+                .map((t: string) => t.trim())
+                .slice(0, 10)
+            : [];
+
+          const validColor =
+            typeof n.color === "string" && hexRegex.test(n.color.trim())
+              ? n.color.trim()
+              : undefined;
+
           try {
             await createNote({
-              title: n.title,
-              content: n.content,
-              tags: Array.isArray(n.tags) ? n.tags : [],
-              color: typeof n.color === "string" ? n.color : undefined,
+              title: n.title.trim(),
+              content: n.content.trim(),
+              tags: cleanedTags,
+              color: validColor,
             }).unwrap();
             successCount++;
           } catch {}

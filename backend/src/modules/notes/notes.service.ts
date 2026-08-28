@@ -63,7 +63,10 @@ class NotesService {
       };
 
       if (search) {
-        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+        const escapedSearch = search.replace(
+          /[.*+?^${}()|[\]\\]/g,
+          String.raw`\$&`,
+        );
         filter.$or = [
           { title: { $regex: escapedSearch, $options: "i" } },
           { content: { $regex: escapedSearch, $options: "i" } },
@@ -71,7 +74,9 @@ class NotesService {
         ];
       }
 
-      const notes = await Note.find(filter);
+      const notes = await Note.find(filter).sort({
+        createdAt: -1,
+      });
 
       return serviceResponse(200, true, "All notes fetched successfully", {
         notes,

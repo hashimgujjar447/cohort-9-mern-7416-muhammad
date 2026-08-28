@@ -199,7 +199,7 @@ const NoteEditPage = () => {
         </div>
       </div>
 
-      {/* <div className="mb-8 flex flex-wrap gap-4">
+      <div className="mb-8 flex flex-wrap gap-4">
         <Button
           handleClick={() => setIsPinned((prev) => !prev)}
           className={`rounded-xl px-5 ${
@@ -221,7 +221,7 @@ const NoteEditPage = () => {
         >
           {isArchived ? "Archived" : "Archive Note"}
         </Button>
-      </div> */}
+      </div>
 
       <Button
         handleClick={handleUpdate}
